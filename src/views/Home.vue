@@ -27,19 +27,10 @@
 
 <script lang="ts">
 import Vue from "vue";
-import http from "@/service/axios";
 
 export default Vue.extend({
   name: "Home",
   created() {
-    http
-      .get("https://praga-production.up.railway.app/plague/list")
-      .then((res) => {
-        console.log(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         (position: any) => {
