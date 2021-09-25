@@ -1,5 +1,6 @@
 module.exports = {
-  transpileDependencies: [
-    'vuetify'
-  ]
-}
+  configureWebpack: {
+    mode: process.env.NODE_ENV,
+  },
+  transpileDependencies: ["vuetify"],
+};
