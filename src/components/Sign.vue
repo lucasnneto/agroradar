@@ -31,7 +31,7 @@ export default Vue.extend({
   components: { In, Up },
   name: "Sign",
   data: () => ({
-    mode: "up",
+    mode: "in",
   }),
   methods: {
     changeMode(mode: string): void {
