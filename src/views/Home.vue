@@ -6,7 +6,7 @@
     <l-map
       class="absolute"
       style="height:100vh;z-index: 0;"
-      :zoom="7"
+      :zoom="6"
       :center="center"
     >
       <l-tile-layer :url="url"></l-tile-layer>
@@ -15,11 +15,12 @@
       elevation="2"
       fab
       x-large
+      color="primary"
       class="absolute"
       :class="isMobile ? 'mb-8' : 'mr-12'"
       @click="openModal"
     >
-      <img src="@/assets/leaf.svg" />
+      <img src="@/assets/leaf-white.svg" />
     </v-btn>
     <router-view />
   </div>

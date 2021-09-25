@@ -12,41 +12,60 @@
       <h1>Entrar</h1>
     </div>
     <div class="fill-height d-flex flex-column justify-center">
-      <div>
-        <v-text-field
-          class="mb-6"
-          v-model="email"
-          outlined
-          :rules="[rules.required, rules.email]"
-          label="E-mail"
-        ></v-text-field>
-        <v-text-field
-          class="mb-100"
-          v-model="senha"
-          :type="typePass"
-          @click:append="
-            typePass = typePass === 'password' ? 'text' : 'password'
-          "
-          :append-icon="
-            typePass === 'password' ? 'mdi-eye-outline' : 'mdi-eye-off-outline'
-          "
-          :rules="[rules.required]"
-          outlined
-          label="Senha"
-        ></v-text-field>
-        <v-btn block height="52" class="mb-8" color="primary" @click="entrar">
-          Entrar
-        </v-btn>
-        <v-btn block height="52" text color="primary" @click="create">
-          Criar conta
-        </v-btn>
-      </div>
+      <v-form ref="login">
+        <div>
+          <v-text-field
+            class="mb-6"
+            v-model="email"
+            outlined
+            :rules="[rules.required, rules.email]"
+            label="E-mail"
+          ></v-text-field>
+          <v-text-field
+            class="mb-100"
+            v-model="senha"
+            :type="typePass"
+            @click:append="
+              typePass = typePass === 'password' ? 'text' : 'password'
+            "
+            :append-icon="
+              typePass === 'password'
+                ? 'mdi-eye-outline'
+                : 'mdi-eye-off-outline'
+            "
+            :rules="[rules.required]"
+            outlined
+            label="Senha"
+          ></v-text-field>
+          <v-btn
+            block
+            height="52"
+            class="mb-8"
+            color="primary"
+            @click="entrar"
+            :loading="loading"
+          >
+            Entrar
+          </v-btn>
+          <v-btn
+            block
+            height="52"
+            text
+            color="primary"
+            @click="create"
+            :disabled="loading"
+          >
+            Criar conta
+          </v-btn>
+        </div>
+      </v-form>
     </div>
   </div>
 </template>
 <script lang="ts">
 import Vue from "vue";
 import rules from "@/mixins/rules";
+import { mapState } from "vuex";
 export default Vue.extend({
   mixins: [rules],
   data: () => ({
@@ -54,8 +73,21 @@ export default Vue.extend({
     senha: "",
     typePass: "password",
   }),
+  computed: {
+    ...mapState("auth", ["status"]),
+    loading() {
+      return this.status === "loading";
+    },
+  },
   methods: {
     entrar() {
+      if (
+        !(this.$refs.login as Vue & {
+          validate: () => boolean;
+        }).validate()
+      ) {
+        return;
+      }
       const payload = {
         email: this.email,
         password: this.senha,

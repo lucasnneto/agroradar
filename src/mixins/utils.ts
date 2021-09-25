@@ -32,3 +32,9 @@ export function getUFs() {
 export function getTypes() {
   return ["Garfanhoto", "Farrugem asiatica", "Aranha"];
 }
+export function removerMask(value: string) {
+  if (value) {
+    return value.replace(/[.|\-|/()\s]/g, "");
+  }
+  return "";
+}

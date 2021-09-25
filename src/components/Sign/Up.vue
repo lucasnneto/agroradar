@@ -7,42 +7,87 @@
       <h1>Nova Conta</h1>
     </div>
     <div class="fill-height d-flex flex-column justify-center">
-      <div>
-        <v-text-field
-          :class="isMobile ? 'mb-0' : 'mb-4'"
-          outlined
-          label="Nome"
-        ></v-text-field>
-        <v-text-field
-          :class="isMobile ? 'mb-0' : 'mb-4'"
-          outlined
-          label="CPF"
-        ></v-text-field>
-        <v-text-field
-          :class="isMobile ? 'mb-0' : 'mb-4'"
-          outlined
-          label="E-mail"
-        ></v-text-field>
-        <v-text-field
-          :class="isMobile ? 'mb-4' : 'mb-12'"
-          outlined
-          label="Senha"
-        ></v-text-field>
-        <v-btn block height="52" class="mb-4" color="primary">
-          Criar conta
-        </v-btn>
-        <div class="d-flex justify-center">
-          <v-btn fab color="black" outlined @click="login">
-            <v-icon>mdi-arrow-left</v-icon>
+      <v-form ref="form">
+        <div>
+          <v-text-field
+            :class="isMobile ? 'mb-0' : 'mb-4'"
+            :rules="[rules.required]"
+            v-model="name"
+            outlined
+            label="Nome"
+          ></v-text-field>
+          <v-text-field
+            :class="isMobile ? 'mb-0' : 'mb-4'"
+            :rules="[rules.required, rules.cpf]"
+            v-model="taxId"
+            v-mask="'###.###.###-##'"
+            outlined
+            label="CPF"
+          ></v-text-field>
+          <v-text-field
+            :class="isMobile ? 'mb-0' : 'mb-4'"
+            :rules="[rules.required, rules.email]"
+            v-model="email"
+            outlined
+            label="E-mail"
+            autocomplete="new-username"
+          ></v-text-field>
+          <v-text-field
+            :class="isMobile ? 'mb-4' : 'mb-12'"
+            v-model="senha"
+            :type="typePass"
+            autocomplete="new-password"
+            @click:append="
+              typePass = typePass === 'password' ? 'text' : 'password'
+            "
+            :append-icon="
+              typePass === 'password'
+                ? 'mdi-eye-outline'
+                : 'mdi-eye-off-outline'
+            "
+            :rules="[rules.required]"
+            outlined
+            label="Senha"
+          ></v-text-field>
+          <v-btn
+            block
+            height="52"
+            class="mb-4"
+            color="primary"
+            @click="cadastrar"
+            :loading="loading"
+          >
+            Criar conta
           </v-btn>
+          <div class="d-flex justify-center">
+            <v-btn
+              fab
+              color="black"
+              outlined
+              @click="login"
+              :disabled="loading"
+            >
+              <v-icon>mdi-arrow-left</v-icon>
+            </v-btn>
+          </div>
         </div>
-      </div>
+      </v-form>
     </div>
   </div>
 </template>
 <script lang="ts">
 import Vue from "vue";
+import rules from "@/mixins/rules";
+import { mapState } from "vuex";
 export default Vue.extend({
+  mixins: [rules],
+  data: () => ({
+    email: "",
+    senha: "",
+    taxId: "",
+    name: "",
+    typePass: "password",
+  }),
   methods: {
     login() {
       this.$emit("change-mode", "in");
@@ -50,10 +95,30 @@ export default Vue.extend({
     closeModal() {
       this.$router.push({ name: "home" });
     },
+    cadastrar() {
+      if (
+        !(this.$refs.form as Vue & {
+          validate: () => boolean;
+        }).validate()
+      ) {
+        return;
+      }
+      const payload = {
+        email: this.email,
+        password: this.senha,
+        taxId: this.taxId,
+        name: this.name,
+      };
+      this.$store.dispatch("auth/REGISTRAR", payload);
+    },
   },
   computed: {
     isMobile() {
       return this.$vuetify.breakpoint.width <= 700;
+    },
+    ...mapState("auth", ["status"]),
+    loading() {
+      return this.status === "loading";
     },
   },
 });
