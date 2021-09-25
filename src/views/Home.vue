@@ -6,10 +6,27 @@
     <l-map
       class="absolute"
       style="height:100vh;z-index: 0;"
-      :zoom="6"
+      :zoom="9"
       :center="center"
     >
       <l-tile-layer :url="url"></l-tile-layer>
+      <l-circle
+        v-for="area in items"
+        :key="area._id"
+        :lat-lng="[area.farmId.position.lat, area.farmId.position.long]"
+        :radius="area.farmId.position.radius"
+        :color="$vuetify.theme.themes.light.primary.darken2"
+        :fillColor="$vuetify.theme.themes.light.primary.darken2"
+      >
+        <l-popup :options="{ minWidth: 180 }">
+          <div class="d-flex flex-column justify-center text-center">
+            <img src="@/assets/garfanhoto.svg" class="mb-3" height="30" />
+            <h1 class="mb-1">1.300</h1>
+            <p class="mb-5">Casos</p>
+            <h2>Garfanhoto</h2>
+          </div>
+        </l-popup>
+      </l-circle>
     </l-map>
     <v-btn
       elevation="2"
@@ -20,7 +37,7 @@
       :class="isMobile ? 'mb-8' : 'mr-12'"
       @click="openModal"
     >
-      <img src="@/assets/leaf-white.svg" />
+      <v-icon size="38">mdi-login-variant</v-icon>
     </v-btn>
     <router-view />
   </div>
@@ -28,10 +45,11 @@
 
 <script lang="ts">
 import Vue from "vue";
+import { mapState } from "vuex";
 
 export default Vue.extend({
   name: "Home",
-  created() {
+  async created() {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         (position: any) => {
@@ -46,6 +64,7 @@ export default Vue.extend({
         }
       );
     }
+    await this.$store.dispatch("plague/GET_LIST");
   },
   methods: {
     openModal() {
@@ -53,6 +72,7 @@ export default Vue.extend({
     },
   },
   computed: {
+    ...mapState("plague", ["items"]),
     url() {
       return process.env.VUE_APP_MAP_URL;
     },
@@ -61,7 +81,7 @@ export default Vue.extend({
     },
   },
   data: () => ({
-    center: [-18.9225925, -48.2652564],
+    center: [-19.7483, -47.9169], //[-18.9225925, -48.2652564],
   }),
 });
 </script>

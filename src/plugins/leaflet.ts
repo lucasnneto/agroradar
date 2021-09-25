@@ -5,7 +5,7 @@ import { Icon } from "leaflet";
 
 Vue.component("l-map", LMap);
 Vue.component("l-tile-layer", LTileLayer);
-Vue.component("l-poupup", LPopup);
+Vue.component("l-popup", LPopup);
 Vue.component("l-circle", LCircle);
 
 type D = Icon.Default & {

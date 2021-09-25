@@ -30,7 +30,7 @@ export function getUFs() {
   };
 }
 export function getTypes() {
-  return ["Garfanhoto", "Farrugem asiatica", "Aranha"];
+  return ["Garfanhoto", "Farrugem asiática", "Aranha", "Outro"];
 }
 export function removerMask(value: string) {
   if (value) {
