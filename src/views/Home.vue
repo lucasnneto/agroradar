@@ -1,16 +1,14 @@
 <template>
-  <hello-world />
+  <h1>aaa</h1>
 </template>
 
 <script lang="ts">
-  import Vue from 'vue'
-  import HelloWorld from '../components/HelloWorld.vue'
+import Vue from "vue";
 
-  export default Vue.extend({
-    name: 'Home',
-
-    components: {
-      HelloWorld,
-    },
-  })
+export default Vue.extend({
+  name: "Home",
+  created() {
+    console.log(process.env.VUE_APP_SOMEKEY);
+  },
+});
 </script>
