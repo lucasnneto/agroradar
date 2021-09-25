@@ -6,8 +6,15 @@
     opacity="0.4"
     :dark="false"
   >
-    <div class="d-flex fill-height align-center">
-      <v-btn elevation="2" fab x-large class="mr-6" @click="closeModal">
+    <div class="d-flex fill-height align-center justify-end main-card">
+      <v-btn
+        elevation="2"
+        v-if="$vuetify.breakpoint.width > 700"
+        fab
+        x-large
+        class="mr-6"
+        @click="closeModal"
+      >
         <img src="@/assets/close-green.svg" />
       </v-btn>
       <component :is="mode" @change-mode="changeMode" />
@@ -39,5 +46,13 @@ export default Vue.extend({
 <style scoped>
 ::v-deep .v-overlay__content {
   height: 100%;
+}
+.main-card {
+  width: 50vw;
+}
+@media (max-width: 700px) {
+  .main-card {
+    width: 100%;
+  }
 }
 </style>

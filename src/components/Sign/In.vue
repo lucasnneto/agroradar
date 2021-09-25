@@ -1,6 +1,16 @@
 <template>
   <div class="card white fill-height py-11 px-8 d-flex flex-column">
-    <h1>Entrar</h1>
+    <div class="d-flex">
+      <v-btn
+        v-if="$vuetify.breakpoint.width <= 700"
+        icon
+        @click="closeModal"
+        class="mr-2"
+      >
+        <img height="20" src="@/assets/close-green.svg" />
+      </v-btn>
+      <h1>Entrar</h1>
+    </div>
     <div class="fill-height d-flex flex-column justify-center">
       <div>
         <v-text-field class="mb-6" outlined label="E-mail"></v-text-field>
@@ -22,13 +32,27 @@ export default Vue.extend({
     create() {
       this.$emit("change-mode", "up");
     },
+    closeModal() {
+      this.$router.push({ name: "home" });
+    },
   },
 });
 </script>
 <style scoped>
 .card {
-  width: 460px;
+  width: 420px;
   border-radius: 35px 0px 0px 35px;
+}
+@media (max-width: 700px) {
+  .card {
+    width: 100vw;
+    border-radius: 0;
+  }
+}
+@media (min-width: 1350px) {
+  .card {
+    width: 500px;
+  }
 }
 .mb-100 {
   margin-bottom: 100px !important;
