@@ -4,6 +4,7 @@ import store from "@/store";
 import Home from "../views/Home.vue";
 import Sign from "../components/Sign.vue";
 import Dashboard from "../views/Dashboard.vue";
+import Plague from "../views/Plague.vue";
 
 Vue.use(VueRouter);
 
@@ -24,6 +25,12 @@ const routes: Array<RouteConfig> = [
     path: "/dashboard",
     name: "dashboard",
     component: Dashboard,
+    meta: { auth: true },
+  },
+  {
+    path: "/plague",
+    name: "plague",
+    component: Plague,
     meta: { auth: true },
   },
   {
