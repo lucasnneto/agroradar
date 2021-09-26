@@ -1,12 +1,15 @@
 <template>
   <div class="card white fill-height py-11 px-8 d-flex flex-column">
-    <div class="d-flex mb-6">
-      <v-btn v-if="isMobile" icon @click="closeModal" class="mr-2">
-        <img height="20" src="@/assets/close-green.svg" />
-      </v-btn>
+    <div class="d-flex mb-6" v-if="!isMobile">
       <h1>Nova Conta</h1>
     </div>
     <div class="fill-height d-flex flex-column justify-center">
+      <div class="d-flex mb-6" v-if="isMobile">
+        <v-btn v-if="isMobile" icon @click="closeModal" class="mr-2">
+          <img height="20" src="@/assets/close-green.svg" />
+        </v-btn>
+        <h1>Nova Conta</h1>
+      </div>
       <v-form ref="form">
         <div>
           <v-text-field
