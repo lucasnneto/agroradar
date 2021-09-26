@@ -63,9 +63,15 @@
                 style="height:150px; width:190px"
                 class="grey"
                 :class="isMobile ? 'mt-10' : 'mr-10'"
-              ></div>
-              <v-btn color="primary darken-1" disabled min-width="180" x-large
-                >Tirar foto</v-btn
+              >
+                <img height="150" width="190" :src="image" v-if="image" />
+              </div>
+              <v-btn
+                color="primary darken-1"
+                @click="newImage"
+                min-width="180"
+                x-large
+                >Enviar Foto</v-btn
               >
             </div>
           </v-col>
@@ -121,6 +127,8 @@ export default Vue.extend({
     type: "",
     farm: "",
     otherType: "",
+    image: [] as any,
+    file: {} as any,
   }),
   methods: {
     newFarm() {
@@ -129,6 +137,26 @@ export default Vue.extend({
     },
     closeModal() {
       this.$store.dispatch("plague/CHANGE", { modal: "" });
+    },
+    newImage() {
+      var input = document.createElement("input");
+      input.type = "file";
+      input.accept = "image/*";
+      input.onchange = () => {
+        const file = (input.files as any)[0];
+        if (file.size >= 5000000) {
+          this.$toast.error("Utilize uma imagem de no máximo 5Mb");
+          return;
+        }
+        this.file = file;
+
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+          this.image = reader.result;
+        };
+      };
+      input.click();
     },
     createPlague() {
       if (
@@ -143,12 +171,22 @@ export default Vue.extend({
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g, "")
         .toUpperCase();
+      const data = new FormData();
+      data.append("name", this.type === "OUTRO" ? semAcento : this.type);
+      data.append("farmId", this.farm);
+      if (this.image) {
+        data.append("images", this.file);
+        data.append("photo", "sim");
+      }
 
-      const payload = {
-        name: this.type === "OUTRO" ? semAcento : this.type,
-        farmId: this.farm,
-      };
-      this.$store.dispatch("plague/NEW_PLAGUE", payload);
+      // const payload = {
+      //   name: this.type === "OUTRO" ? semAcento : this.type,
+      //   farmId: this.farm,
+      //   images: this.image ? this.file : undefined,
+      //   photo: this.image ? "sim" : undefined,
+      // };
+      console.log(data);
+      this.$store.dispatch("plague/NEW_PLAGUE", data);
     },
   },
 });

@@ -57,6 +57,9 @@ const actions = {
       method: "post",
       url: "/plague/register",
       data: payload,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
     });
     if (error) {
       commit("CHANGE", { status: "error" });
