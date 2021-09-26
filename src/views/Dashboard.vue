@@ -6,9 +6,20 @@
     <div class="d-flex justify-space-between align-center mb-4">
       <h2 v-if="isMobile">Bem vindo, {{ name.split(" ")[0] }}</h2>
       <h1 v-else>Bem vindo, {{ name.split(" ")[0] }}</h1>
-      <v-btn fab color="primary" @click="newPlague">
-        <v-icon x-large>mdi-plus</v-icon>
-      </v-btn>
+      <div>
+        <v-btn
+          icon
+          color="primary"
+          @click="openAlert"
+          :loading="status === 'loading'"
+          class="mr-4"
+        >
+          <v-icon>mdi-bell-outline</v-icon>
+        </v-btn>
+        <v-btn fab color="primary" @click="newPlague">
+          <v-icon x-large>mdi-plus</v-icon>
+        </v-btn>
+      </div>
     </div>
     <v-select
       :items="ufs"
@@ -96,7 +107,11 @@
               :dark="false"
               absolute
             >
-              <v-btn color="primary darken-1" @click="filterMap">
+              <v-btn
+                color="primary darken-1"
+                @click="filterMap"
+                :loading="status === 'loadingMap'"
+              >
                 Ver mapa
               </v-btn>
             </v-overlay>
@@ -137,6 +152,7 @@
     </v-navigation-drawer>
     <newplague v-if="modalPlague === 'NEW'" />
     <filterMap v-if="modalPlague === 'FILTER'" />
+    <alertModal v-if="modalPlague === 'ALERT'" />
   </v-flex>
 </template>
 <script lang="ts">
@@ -144,6 +160,7 @@ import Vue from "vue";
 import { getUFs, getTypes } from "@/mixins/utils";
 import datapicker from "@/components/datapicker.vue";
 import newplague from "@/components/newplague.vue";
+import alertModal from "@/components/alert.vue";
 import filterMap from "@/components/maps/filter.vue";
 import { mapState } from "vuex";
 export default Vue.extend({
@@ -151,9 +168,10 @@ export default Vue.extend({
     datapicker,
     newplague,
     filterMap,
+    alertModal,
   },
   computed: {
-    ...mapState("plague", { modalPlague: "modal" }),
+    ...mapState("plague", { modalPlague: "modal", status: "status" }),
     ...mapState("farm", { modalFarm: "modal" }),
     ...mapState("auth", ["name"]),
     isMobile() {
@@ -184,6 +202,12 @@ export default Vue.extend({
     },
     newPlague() {
       this.$store.dispatch("plague/CHANGE", { modal: "NEW" });
+    },
+    openAlert() {
+      this.$store.dispatch(
+        "plague/GET_NOTIFICATION",
+        this.$store.getters["auth/userId"]
+      );
     },
     logout() {
       this.$store.dispatch("auth/LOGOUT");

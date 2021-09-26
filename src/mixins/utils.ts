@@ -39,3 +39,39 @@ export function removerMask(value: string) {
   }
   return "";
 }
+export function formattedDate(date: string, ISO?: boolean): string {
+  if (!date) {
+    return "";
+  } else if (date === "0001-01-01T00:00:00") {
+    return "";
+  }
+
+  const dateFormatOptions = {
+    // timeZone: "UTC",
+    day: "numeric",
+    month: "numeric",
+    year: "numeric",
+  };
+
+  if (ISO) {
+    const dateFormatISOOptions = {
+      timeZone: "UTC",
+      day: "numeric",
+      month: "numeric",
+      year: "numeric",
+    };
+
+    let returnDate = date.slice(0, 19);
+    if (returnDate.length === 10) {
+      returnDate = returnDate.concat("T00:00:00.000Z");
+    } else {
+      returnDate = returnDate.concat("Z");
+    }
+    return new Date(returnDate).toLocaleDateString(
+      "pt-BR",
+      dateFormatISOOptions
+    );
+  }
+
+  return new Date(date).toLocaleDateString("pt-BR", dateFormatOptions);
+}
