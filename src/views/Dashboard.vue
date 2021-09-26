@@ -96,7 +96,7 @@
               :dark="false"
               absolute
             >
-              <v-btn color="primary darken-1">
+              <v-btn color="primary darken-1" @click="filterMap">
                 Ver mapa
               </v-btn>
             </v-overlay>
@@ -136,6 +136,7 @@
       </v-flex>
     </v-navigation-drawer>
     <newplague v-if="modalPlague === 'NEW'" />
+    <filterMap v-if="modalPlague === 'FILTER'" />
   </v-flex>
 </template>
 <script lang="ts">
@@ -143,11 +144,13 @@ import Vue from "vue";
 import { getUFs, getTypes } from "@/mixins/utils";
 import datapicker from "@/components/datapicker.vue";
 import newplague from "@/components/newplague.vue";
+import filterMap from "@/components/maps/filter.vue";
 import { mapState } from "vuex";
 export default Vue.extend({
   components: {
     datapicker,
     newplague,
+    filterMap,
   },
   computed: {
     ...mapState("plague", { modalPlague: "modal" }),
@@ -184,6 +187,21 @@ export default Vue.extend({
     },
     logout() {
       this.$store.dispatch("auth/LOGOUT");
+    },
+    filterMap() {
+      if (this.plagues.length === 0) {
+        this.$toast.info("Selecione no mínimo uma praga.");
+        return;
+      }
+      const payload = {
+        state: this.state,
+        payload: {
+          plagues: this.plagues,
+          dateBegin: this.datainicial || undefined,
+          dateEnd: this.datainicial || undefined,
+        },
+      };
+      this.$store.dispatch("plague/GET_PLAGUE_FILTER", payload);
     },
   },
 });

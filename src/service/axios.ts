@@ -5,7 +5,7 @@ const http = axios.create({
 });
 http.interceptors.request.use(
   (config: any) => {
-    if (/\/plague\/list/.test(config.url)) {
+    if (/\/plague\/list/.test(config.url) && config.method === "get") {
       return config;
     }
     if (store.getters["auth/token"]) {
