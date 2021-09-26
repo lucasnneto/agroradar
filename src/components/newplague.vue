@@ -124,7 +124,8 @@ export default Vue.extend({
   }),
   methods: {
     newFarm() {
-      this.$store.dispatch("farm/CHANGE", { modal: "NEW" });
+      this.$router.push({ name: "farm" });
+      this.$store.dispatch("plague/CHANGE", { modal: "" });
     },
     closeModal() {
       this.$store.dispatch("plague/CHANGE", { modal: "" });
