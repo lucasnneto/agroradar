@@ -1,5 +1,6 @@
 export function getUFs() {
   return {
+    BRASIL: "Brasil",
     AC: "Acre",
     AL: "Alagoas",
     AP: "Amapá",

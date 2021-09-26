@@ -124,7 +124,7 @@
               :color="state === uf ? 'primary' : 'white'"
               v-for="uf in ufs"
               :key="uf"
-              class="pr-4"
+              class="pr-3"
               :class="{ 'font-weight-bold primary--text': state === uf }"
             >
               <p class="cursor-pointer" @click="changeUf(uf)">
@@ -163,7 +163,7 @@ export default Vue.extend({
     },
   },
   data: () => ({
-    state: "AC",
+    state: "BRASIL",
     datainicial: "",
     datafinal: "",
     plagues: [] as Array<string>,
