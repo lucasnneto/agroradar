@@ -37,10 +37,9 @@ const actions = {
       url: `/farm/list/${payload}`,
     });
     if (error) {
-      console.log("error", error);
       commit("CHANGE", { status: "error" });
-      if (error?.message) {
-        Vue.$toast.error(error.message);
+      if (error?.response?.data?.message) {
+        Vue.$toast.error(error.response.data.message);
       } else {
         Vue.$toast.error("Ocorreu um erro interno!");
       }

@@ -8,7 +8,7 @@ import farm from "./farm";
 Vue.use(Vuex);
 
 const vuexLocal = new VuexPersistence<any>({
-  storage: window.localStorage,
+  storage: window.sessionStorage,
   key: "hackathon",
 });
 

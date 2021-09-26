@@ -20,10 +20,10 @@
       >
         <l-popup :options="{ minWidth: 180 }">
           <div class="d-flex flex-column justify-center text-center">
-            <img src="@/assets/garfanhoto.svg" class="mb-3" height="30" />
+            <img src="@/assets/gafanhoto.svg" class="mb-3" height="30" />
             <h1 class="mb-1">1.300</h1>
             <p class="mb-5">Casos</p>
-            <h2>Garfanhoto</h2>
+            <h2>Gafanhoto</h2>
           </div>
         </l-popup>
       </l-circle>

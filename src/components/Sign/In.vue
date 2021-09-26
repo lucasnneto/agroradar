@@ -18,6 +18,7 @@
             class="mb-6"
             v-model="email"
             outlined
+            @keyup.enter="entrar"
             :rules="[rules.required, rules.email]"
             label="E-mail"
           ></v-text-field>
@@ -25,6 +26,7 @@
             class="mb-100"
             v-model="senha"
             :type="typePass"
+            @keyup.enter="entrar"
             @click:append="
               typePass = typePass === 'password' ? 'text' : 'password'
             "

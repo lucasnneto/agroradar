@@ -1,5 +1,8 @@
 <template>
-  <v-flex class="ma-10 d-flex flex-column " style="height:85%">
+  <v-flex
+    class="ma-10 d-flex flex-column justify-space-between"
+    style="height:90%"
+  >
     <div class="d-flex justify-space-between align-center mb-4">
       <h2 v-if="isMobile">Bem vindo, João</h2>
       <h1 v-else>Bem vindo, João</h1>
@@ -101,6 +104,14 @@
         </v-col>
       </v-row>
     </div>
+    <div
+      class="d-flex mt-5"
+      :class="isMobile ? 'justify-center' : 'justify-end'"
+    >
+      <v-btn @click="logout" min-width="150px" outlined large color="primary"
+        >Sair</v-btn
+      >
+    </div>
 
     <v-navigation-drawer v-if="!isMobile" permanent app>
       <h3 class="text-center mb-4 mt-10">Estados Referência</h3>
@@ -138,7 +149,7 @@ export default Vue.extend({
   components: {
     datapicker,
     newplague,
-    newfarm
+    newfarm,
   },
   computed: {
     isMobile() {
@@ -170,6 +181,12 @@ export default Vue.extend({
     },
     newPlague() {
       this.$store.dispatch("plague/CHANGE", { modal: "NEW" });
+    },
+    logout() {
+      this.$store.dispatch("auth/RESET");
+      this.$store.dispatch("farm/RESET");
+      this.$store.dispatch("plague/RESET");
+      this.$router.push({ name: "home" });
     },
   },
 });
