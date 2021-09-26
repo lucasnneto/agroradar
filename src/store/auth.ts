@@ -22,6 +22,7 @@ const getDefaultState = () => {
 const state = getDefaultState();
 const getters = {
   token: (state: StadeBase): string => state.token,
+  timeLogin: (state: StadeBase): number => state.timeLogin,
 };
 const mutations = {
   resetState(state: StadeBase): void {
