@@ -16,7 +16,7 @@
               :rules="[rules.required]"
               v-model="name"
             ></v-text-field>
-            <p>Utilize o botão de pesquisa para buscar o endereço pelo CEP</p>
+            <p>Pressione na lupa para realizar a busca automática</p>
             <v-text-field
               outlined
               label="CEP"
@@ -178,12 +178,12 @@ export default Vue.extend({
           long: this.circle.lng,
         },
       };
-      console.log(payload);
       this.$store.dispatch("farm/NEW_FARM", payload);
     },
     searchCEP() {
       if (!this.cep) return;
       this.loadcep = true;
+
       http
         .get("https://ws.apicep.com/cep/" + removerMask(this.cep) + ".json")
         .then((res) => {
