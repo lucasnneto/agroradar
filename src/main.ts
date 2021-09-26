@@ -8,6 +8,8 @@ import "@/plugins/leaflet";
 import VueToast from "vue-toast-notification";
 import "vue-toast-notification/dist/theme-default.css";
 import VueMask from "v-mask";
+import "leaflet-draw/dist/leaflet.draw.css";
+
 Vue.use(VueMask);
 Vue.use(VueToast, {
   position: "top-right",

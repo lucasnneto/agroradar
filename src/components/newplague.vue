@@ -1,5 +1,10 @@
 <template>
-  <v-dialog v-model="cmpModal" persistent max-width="500px">
+  <v-dialog
+    v-model="cmpModal"
+    persistent
+    max-width="500px"
+    :retain-focus="false"
+  >
     <v-card class="pa-5">
       <div class="d-flex">
         <v-btn icon color="primary" class="mr-2" @click="closeModal">

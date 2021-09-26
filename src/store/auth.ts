@@ -4,11 +4,13 @@ import Vue from "vue";
 interface StadeBase {
   token: string;
   status: string;
+  local: Array<any>;
 }
 const getDefaultState = () => {
   return {
     token: "",
     status: "",
+    local: [],
   };
 };
 const state = getDefaultState();

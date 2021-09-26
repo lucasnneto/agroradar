@@ -4,6 +4,7 @@ import store from "@/store";
 import Home from "../views/Home.vue";
 import Sign from "../components/Sign.vue";
 import Dashboard from "../views/Dashboard.vue";
+import newfarm from "../components/newfarm.vue";
 
 Vue.use(VueRouter);
 
@@ -24,6 +25,12 @@ const routes: Array<RouteConfig> = [
     path: "/dashboard",
     name: "dashboard",
     component: Dashboard,
+    meta: { auth: true },
+  },
+  {
+    path: "/farm",
+    name: "farm",
+    component: newfarm,
     meta: { auth: true },
   },
   {

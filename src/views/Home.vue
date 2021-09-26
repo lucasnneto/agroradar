@@ -55,6 +55,9 @@ export default Vue.extend({
         (position: any) => {
           const crd = position?.coords;
           this.center = [crd.latitude, crd.longitude];
+          this.$store.dispatch("auth/CHANGE", {
+            local: [crd.latitude, crd.longitude],
+          });
         },
         async (error: any) => {
           console.error(error);
@@ -81,7 +84,7 @@ export default Vue.extend({
     },
   },
   data: () => ({
-    center: [-19.7483, -47.9169], //[-18.9225925, -48.2652564],
+    center: [-19.7483, -47.9169],
   }),
 });
 </script>

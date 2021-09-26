@@ -135,8 +135,7 @@
         </v-flex>
       </v-flex>
     </v-navigation-drawer>
-    <newplague />
-    <newfarm />
+    <newplague v-if="modalPlague === 'NEW'" />
   </v-flex>
 </template>
 <script lang="ts">
@@ -144,14 +143,15 @@ import Vue from "vue";
 import { getUFs, getTypes } from "@/mixins/utils";
 import datapicker from "@/components/datapicker.vue";
 import newplague from "@/components/newplague.vue";
-import newfarm from "@/components/newfarm.vue";
+import { mapState } from "vuex";
 export default Vue.extend({
   components: {
     datapicker,
     newplague,
-    newfarm,
   },
   computed: {
+    ...mapState("plague", { modalPlague: "modal" }),
+    ...mapState("farm", { modalFarm: "modal" }),
     isMobile() {
       return this.$vuetify.breakpoint.width <= 700;
     },
@@ -167,7 +167,6 @@ export default Vue.extend({
     datainicial: "",
     datafinal: "",
     plagues: [] as Array<string>,
-    modal: false,
   }),
   methods: {
     changeUf(uf: string) {
