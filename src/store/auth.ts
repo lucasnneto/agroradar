@@ -22,6 +22,8 @@ const getDefaultState = () => {
 const state = getDefaultState();
 const getters = {
   token: (state: StadeBase): string => state.token,
+  userId: (state: StadeBase): string => state.userId,
+  name: (state: StadeBase): string => state.name,
   timeLogin: (state: StadeBase): number => state.timeLogin,
 };
 const mutations = {

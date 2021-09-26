@@ -4,8 +4,8 @@
     style="height:90%"
   >
     <div class="d-flex justify-space-between align-center mb-4">
-      <h2 v-if="isMobile">Bem vindo, João</h2>
-      <h1 v-else>Bem vindo, João</h1>
+      <h2 v-if="isMobile">Bem vindo, {{ name.split(" ")[0] }}</h2>
+      <h1 v-else>Bem vindo, {{ name.split(" ")[0] }}</h1>
       <v-btn fab color="primary" @click="newPlague">
         <v-icon x-large>mdi-plus</v-icon>
       </v-btn>
@@ -152,6 +152,7 @@ export default Vue.extend({
   computed: {
     ...mapState("plague", { modalPlague: "modal" }),
     ...mapState("farm", { modalFarm: "modal" }),
+    ...mapState("auth", ["name"]),
     isMobile() {
       return this.$vuetify.breakpoint.width <= 700;
     },

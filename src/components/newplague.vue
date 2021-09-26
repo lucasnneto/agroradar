@@ -112,10 +112,8 @@ export default Vue.extend({
     },
   },
   created() {
-    this.$store.dispatch(
-      "farm/GET_LIST",
-      "9ac521ac-0d9e-4f6a-8010-d26b27e72cfa"
-    );
+    const userId = this.$store.getters["auth/userId"];
+    this.$store.dispatch("farm/GET_LIST", userId);
   },
   data: () => ({
     type: "",
