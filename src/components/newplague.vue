@@ -26,7 +26,8 @@
             <v-text-field
               outlined
               label="Nome da praga"
-              v-if="type === 'Outro'"
+              v-if="type === 'OUTRO'"
+              v-uppercase
               :rules="[rules.required]"
               v-model="otherType"
             ></v-text-field>
@@ -137,11 +138,16 @@ export default Vue.extend({
       ) {
         return;
       }
+      var semAcento = this.otherType
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toUpperCase();
+
       const payload = {
-        name: this.type === "Outro" ? this.otherType : this.type,
+        name: this.type === "OUTRO" ? semAcento : this.type,
         farmId: this.farm,
       };
-
       this.$store.dispatch("plague/NEW_PLAGUE", payload);
     },
   },

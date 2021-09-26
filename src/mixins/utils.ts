@@ -31,7 +31,7 @@ export function getUFs() {
   };
 }
 export function getTypes() {
-  return ["Gafanhoto", "Farrugem asiática", "Aranha", "Outro"];
+  return ["GAFANHOTO", "FERRUGEM ASIATICA", "ARANHA", "OUTRO"];
 }
 export function removerMask(value: string) {
   if (value) {

@@ -14,6 +14,15 @@ Vue.use(VueMask);
 Vue.use(VueToast, {
   position: "top-right",
 });
+Vue.directive("uppercase", (el, _, vnode) => {
+  const input = el.querySelectorAll("input")[0];
+  if (input) {
+    const processedValue = input.value.toUpperCase();
+    input.value = processedValue;
+    (vnode.componentInstance as any).$emit("input", processedValue);
+  }
+});
+
 dotenv.config();
 
 Vue.config.productionTip = false;
