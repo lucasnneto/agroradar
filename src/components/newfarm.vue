@@ -16,7 +16,7 @@
               :rules="[rules.required]"
               v-model="name"
             ></v-text-field>
-            <p>Utilize o botão de pesquisa para buscar o endereço pelo CEP</p>
+            <p>Pressione na lupa para realizar a busca automática</p>
             <v-text-field
               outlined
               label="CEP"
@@ -81,6 +81,7 @@
           color="primary"
           @click="createFarm"
           :disabled="indraw"
+          :loading="status === 'loading'"
           >SALVAR</v-btn
         >
       </div>
@@ -103,16 +104,13 @@ export default Vue.extend({
   },
 
   computed: {
-    ...mapState("farm", ["modal"]),
+    ...mapState("farm", ["modal", "status"]),
     ...mapState("auth", ["local"]),
     types() {
       return getTypes();
     },
     isMobile() {
       return this.$vuetify.breakpoint.width <= 700;
-    },
-    loadingItems() {
-      return status === "loadingItems";
     },
     Ufs() {
       const ufs = Object.keys(getUFs());
@@ -178,19 +176,23 @@ export default Vue.extend({
           long: this.circle.lng,
         },
       };
-      console.log(payload);
       this.$store.dispatch("farm/NEW_FARM", payload);
     },
     searchCEP() {
       if (!this.cep) return;
       this.loadcep = true;
+
       http
         .get("https://ws.apicep.com/cep/" + removerMask(this.cep) + ".json")
         .then((res) => {
-          this.address = res.data.address;
-          this.district = res.data.district;
-          this.city = res.data.city;
-          this.state = res.data.state;
+          if (!res.data.ok) {
+            this.$toast.error(res.data.message);
+          } else {
+            this.address = res.data.address;
+            this.district = res.data.district;
+            this.city = res.data.city;
+            this.state = res.data.state;
+          }
         })
         .catch((err) => {
           this.$toast.error("Ocorreu um erro ao buscar o CEP");

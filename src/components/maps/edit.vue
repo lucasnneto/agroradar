@@ -1,6 +1,7 @@
 <template>
   <div>
     <h2>Selecione Região</h2>
+    <p>Utilize o botão mais abaixo para iniciar a demarcação de área</p>
 
     <l-map
       ref="map"
@@ -11,25 +12,33 @@
       <l-tile-layer :url="url"></l-tile-layer>
     </l-map>
 
-    <div class="d-flex justify-space-around text-center my-10">
-      <div>
+    <div
+      class="d-flex justify-space-around text-center my-10"
+      :class="{ 'flex-column': isMobile }"
+    >
+      <div :class="{ 'mb-5': isMobile }">
         <h4 :class="{ 'error--text': invalidade }">
           {{ lat }}
         </h4>
         <h3 :class="{ 'error--text': invalidade }">LAT</h3>
       </div>
-      <div>
+      <div :class="{ 'mb-5': isMobile }">
         <h4 :class="{ 'error--text': invalidade }">
           {{ lng }}
         </h4>
         <h3 :class="{ 'error--text': invalidade }">LNG</h3>
       </div>
-      <div>
+      <div :class="{ 'mb-5': isMobile }">
         <h4 :class="{ 'error--text': invalidade }">
           {{ raio }}
         </h4>
         <h3 :class="{ 'error--text': invalidade }">RAIO</h3>
       </div>
+    </div>
+    <div class="d-flex justify-center">
+      <p v-if="invalidade" class="error--text" style="font-size:12px">
+        Área é requerida.
+      </p>
     </div>
     <div class="d-flex justify-center">
       <v-btn
@@ -38,7 +47,9 @@
         height="50"
         color="primary darken-1"
         @click="novoCircle"
-        >{{ drawControl === "draw" ? "NOVA REGIÃO" : "APAGAR MARCAÇÃO" }}</v-btn
+        >{{
+          drawControl === "draw" ? "DELIMITAR ÁREA" : "APAGAR MARCAÇÃO"
+        }}</v-btn
       >
     </div>
   </div>
@@ -94,6 +105,9 @@ export default Vue.extend({
     ...mapState("auth", ["local"]),
     url() {
       return process.env.VUE_APP_MAP_URL;
+    },
+    isMobile() {
+      return this.$vuetify.breakpoint.width <= 700;
     },
     center() {
       if (this.local.lenght < 2) return [-19.7483, -47.9169];

@@ -76,6 +76,7 @@
           class="mt-5"
           min-width="180"
           color="primary"
+          :loading="statusPlague === 'loading'"
           @click="createPlague"
           >Salvar</v-btn
         >
@@ -92,7 +93,7 @@ export default Vue.extend({
   mixins: [rules],
   computed: {
     ...mapState("farm", ["items", "status"]),
-    ...mapState("plague", ["modal"]),
+    ...mapState("plague", { modal: "modal", statusPlague: "status" }),
     types() {
       return getTypes();
     },

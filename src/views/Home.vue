@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="fill-height d-flex relative"
-    :class="isMobile ? 'justify-center align-end' : 'justify-end align-center'"
-  >
+  <div class="fill-height d-flex relative justify-end align-center">
     <l-map
       class="absolute"
       style="height:100vh;z-index: 0;"
@@ -10,9 +7,8 @@
       :center="center"
     >
       <l-tile-layer :url="url"></l-tile-layer>
-      <div v-for="area in items" :key="area._id">
+      <div v-for="area in plagues" :key="area._id">
         <l-circle
-          v-if="area.farmId"
           :lat-lng="[area.farmId.position.lat, area.farmId.position.long]"
           :radius="area.farmId.position.radius"
           :color="$vuetify.theme.themes.light.primary.darken2"
@@ -77,6 +73,12 @@ export default Vue.extend({
   },
   computed: {
     ...mapState("plague", ["items"]),
+    plagues() {
+      if (this.items.lenght <= 0) return [];
+      return this.items.filter((el: any) => {
+        return el.farmId && el.farmId.position;
+      });
+    },
     url() {
       return process.env.VUE_APP_MAP_URL;
     },

@@ -9,18 +9,19 @@ http.interceptors.request.use(
       return config;
     }
     if (store.getters["auth/token"]) {
-      const hasExpired =
-        Date.now() >= store.getters["auth/timeLogin"] + 3600000;
+      const hasExpired = Date.now() >= store.getters["auth/timeLogin"] + 1000;
       if (hasExpired) {
-        store.dispatch("authentication/LOGOUT");
-        window.location.reload();
+        store.dispatch("auth/LOGOUT");
         return false;
       }
     }
     config.headers.Authorization = `Bearer ${store.getters["auth/token"]}`;
     return config;
   },
-  (error: any) => Promise.reject(error)
+  (error: any) => {
+    console.log("aqui");
+    Promise.reject(error);
+  }
 );
 export default http;
 
