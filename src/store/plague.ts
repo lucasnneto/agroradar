@@ -2,12 +2,14 @@ import { axiosCall } from "@/service/axios";
 import Vue from "vue";
 interface StadeBase {
   items: Array<any>;
+  item: any;
   status: string;
   modal: string;
 }
 const getDefaultState = () => {
   return {
     items: [],
+    item: {},
     status: "",
     modal: "",
   };
@@ -66,6 +68,31 @@ const actions = {
     } else {
       Vue.$toast.success("Registrado com sucesso");
       commit("CHANGE", { status: "", modal: "" });
+    }
+  },
+  async GET_PLAGUE_FILTER({ commit, state }: any, payload: any): Promise<void> {
+    if (state.status === "loading") return;
+    const uf = payload.state === "BRASIL" ? "" : payload.state;
+    commit("CHANGE", { status: "loading" });
+    const [error, data] = await axiosCall({
+      method: "post",
+      url: `/plague/list/${uf}`,
+      data: payload.payload,
+    });
+    if (error) {
+      commit("CHANGE", { status: "error" });
+      if (error?.response?.data?.message) {
+        Vue.$toast.error(error.response.data.message);
+      } else {
+        Vue.$toast.error("Ocorreu um erro interno!");
+      }
+    } else {
+      commit("CHANGE", {
+        status: "",
+        items: data.items,
+        modal: "FILTER",
+        item: { state: payload.state },
+      });
     }
   },
 };

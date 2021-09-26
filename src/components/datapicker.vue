@@ -13,6 +13,7 @@
         prepend-icon="mdi-calendar"
         outlined
         readonly
+        clearable
         v-bind="attrs"
         v-on="on"
       ></v-text-field>

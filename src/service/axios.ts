@@ -5,11 +5,12 @@ const http = axios.create({
 });
 http.interceptors.request.use(
   (config: any) => {
-    if (/\/plague\/list/.test(config.url)) {
+    if (/\/plague\/list/.test(config.url) && config.method === "get") {
       return config;
     }
     if (store.getters["auth/token"]) {
-      const hasExpired = Date.now() >= store.getters["auth/timeLogin"] + 1000;
+      const hasExpired =
+        Date.now() >= store.getters["auth/timeLogin"] + 3600000;
       if (hasExpired) {
         store.dispatch("auth/LOGOUT");
         return false;

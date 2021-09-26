@@ -30,8 +30,7 @@
       fab
       x-large
       color="primary"
-      class="absolute"
-      :class="isMobile ? 'mb-8' : 'mr-12'"
+      class="absolute mr-12"
       @click="openModal"
     >
       <v-icon size="38">mdi-login-variant</v-icon>

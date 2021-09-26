@@ -125,11 +125,12 @@ export default Vue.extend({
   methods: {
     novoCircle() {
       if (this.drawControl === "draw") {
+        this.$toast.clear();
         this.$toast.open({
           message:
             "Agora no mapa, selecione o ponto inicial e mantenha o botão esquerdo do mouse pressionado e empurre para definir a área da fazenda",
           type: "info",
-          duration: 30000,
+          duration: 20000,
         });
         new (L as any).Draw.Circle((this.$refs.map as any).mapObject).enable();
         this.$emit("in-draw", true);

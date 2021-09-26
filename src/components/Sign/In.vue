@@ -1,17 +1,20 @@
 <template>
   <div class="card white fill-height py-11 px-8 d-flex flex-column">
-    <div class="d-flex">
-      <v-btn
-        v-if="$vuetify.breakpoint.width <= 700"
-        icon
-        @click="closeModal"
-        class="mr-4"
-      >
-        <img height="20" src="@/assets/close-green.svg" />
-      </v-btn>
+    <div class="d-flex" v-if="$vuetify.breakpoint.width > 700">
       <h1>Entrar</h1>
     </div>
-    <div class="fill-height d-flex flex-column justify-center">
+    <div class="fill-height d-flex flex-column justify-center ">
+      <div class="d-flex mb-10" v-if="$vuetify.breakpoint.width <= 700">
+        <v-btn
+          v-if="$vuetify.breakpoint.width <= 700"
+          icon
+          @click="closeModal"
+          class="mr-4"
+        >
+          <img height="20" src="@/assets/close-green.svg" />
+        </v-btn>
+        <h1>Entrar</h1>
+      </div>
       <v-form ref="login">
         <div>
           <v-text-field
