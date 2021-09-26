@@ -9,7 +9,8 @@ http.interceptors.request.use(
       return config;
     }
     if (store.getters["auth/token"]) {
-      const hasExpired = Date.now() >= store.getters["auth/timeLogin"] + 1000;
+      const hasExpired =
+        Date.now() >= store.getters["auth/timeLogin"] + 3600000;
       if (hasExpired) {
         store.dispatch("auth/LOGOUT");
         return false;
