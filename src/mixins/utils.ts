@@ -1,5 +1,6 @@
 export function getUFs() {
   return {
+    BRASIL: "Brasil",
     AC: "Acre",
     AL: "Alagoas",
     AP: "Amapá",
@@ -30,7 +31,7 @@ export function getUFs() {
   };
 }
 export function getTypes() {
-  return ["Garfanhoto", "Farrugem asiática", "Aranha", "Outro"];
+  return ["Gafanhoto", "Farrugem asiática", "Aranha", "Outro"];
 }
 export function removerMask(value: string) {
   if (value) {

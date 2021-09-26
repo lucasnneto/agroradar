@@ -1,5 +1,10 @@
 <template>
-  <v-dialog v-model="cmpModal" persistent max-width="500px">
+  <v-dialog
+    v-model="cmpModal"
+    persistent
+    max-width="500px"
+    :retain-focus="false"
+  >
     <v-card class="pa-5">
       <div class="d-flex">
         <v-btn icon color="primary" class="mr-2" @click="closeModal">
@@ -107,10 +112,8 @@ export default Vue.extend({
     },
   },
   created() {
-    this.$store.dispatch(
-      "farm/GET_LIST",
-      "9ac521ac-0d9e-4f6a-8010-d26b27e72cfa"
-    );
+    const userId = this.$store.getters["auth/userId"];
+    this.$store.dispatch("farm/GET_LIST", userId);
   },
   data: () => ({
     type: "",
@@ -119,7 +122,8 @@ export default Vue.extend({
   }),
   methods: {
     newFarm() {
-      this.$store.dispatch("farm/CHANGE", { modal: "NEW" });
+      this.$router.push({ name: "farm" });
+      this.$store.dispatch("plague/CHANGE", { modal: "" });
     },
     closeModal() {
       this.$store.dispatch("plague/CHANGE", { modal: "" });

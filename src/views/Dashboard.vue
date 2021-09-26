@@ -1,8 +1,11 @@
 <template>
-  <v-flex class="ma-10 d-flex flex-column " style="height:85%">
+  <v-flex
+    class="ma-10 d-flex flex-column justify-space-between"
+    style="height:90%"
+  >
     <div class="d-flex justify-space-between align-center mb-4">
-      <h2 v-if="isMobile">Bem vindo, João</h2>
-      <h1 v-else>Bem vindo, João</h1>
+      <h2 v-if="isMobile">Bem vindo, {{ name.split(" ")[0] }}</h2>
+      <h1 v-else>Bem vindo, {{ name.split(" ")[0] }}</h1>
       <v-btn fab color="primary" @click="newPlague">
         <v-icon x-large>mdi-plus</v-icon>
       </v-btn>
@@ -101,6 +104,14 @@
         </v-col>
       </v-row>
     </div>
+    <div
+      class="d-flex mt-5"
+      :class="isMobile ? 'justify-center' : 'justify-end'"
+    >
+      <v-btn @click="logout" min-width="150px" outlined large color="primary"
+        >Sair</v-btn
+      >
+    </div>
 
     <v-navigation-drawer v-if="!isMobile" permanent app>
       <h3 class="text-center mb-4 mt-10">Estados Referência</h3>
@@ -113,7 +124,7 @@
               :color="state === uf ? 'primary' : 'white'"
               v-for="uf in ufs"
               :key="uf"
-              class="pr-4"
+              class="pr-3"
               :class="{ 'font-weight-bold primary--text': state === uf }"
             >
               <p class="cursor-pointer" @click="changeUf(uf)">
@@ -124,8 +135,7 @@
         </v-flex>
       </v-flex>
     </v-navigation-drawer>
-    <newplague />
-    <newfarm />
+    <newplague v-if="modalPlague === 'NEW'" />
   </v-flex>
 </template>
 <script lang="ts">
@@ -133,14 +143,16 @@ import Vue from "vue";
 import { getUFs, getTypes } from "@/mixins/utils";
 import datapicker from "@/components/datapicker.vue";
 import newplague from "@/components/newplague.vue";
-import newfarm from "@/components/newfarm.vue";
+import { mapState } from "vuex";
 export default Vue.extend({
   components: {
     datapicker,
     newplague,
-    newfarm
   },
   computed: {
+    ...mapState("plague", { modalPlague: "modal" }),
+    ...mapState("farm", { modalFarm: "modal" }),
+    ...mapState("auth", ["name"]),
     isMobile() {
       return this.$vuetify.breakpoint.width <= 700;
     },
@@ -152,11 +164,10 @@ export default Vue.extend({
     },
   },
   data: () => ({
-    state: "AC",
+    state: "BRASIL",
     datainicial: "",
     datafinal: "",
     plagues: [] as Array<string>,
-    modal: false,
   }),
   methods: {
     changeUf(uf: string) {
@@ -170,6 +181,9 @@ export default Vue.extend({
     },
     newPlague() {
       this.$store.dispatch("plague/CHANGE", { modal: "NEW" });
+    },
+    logout() {
+      this.$store.dispatch("auth/LOGOUT");
     },
   },
 });

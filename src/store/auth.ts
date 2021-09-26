@@ -4,16 +4,27 @@ import Vue from "vue";
 interface StadeBase {
   token: string;
   status: string;
+  timeLogin: number;
+  name: string;
+  userId: string;
+  local: Array<any>;
 }
 const getDefaultState = () => {
   return {
     token: "",
     status: "",
+    timeLogin: 0,
+    name: "",
+    userId: "",
+    local: [],
   };
 };
 const state = getDefaultState();
 const getters = {
   token: (state: StadeBase): string => state.token,
+  userId: (state: StadeBase): string => state.userId,
+  name: (state: StadeBase): string => state.name,
+  timeLogin: (state: StadeBase): number => state.timeLogin,
 };
 const mutations = {
   resetState(state: StadeBase): void {
@@ -30,6 +41,10 @@ const actions = {
   CHANGE({ commit }: any, payload: StadeBase): void {
     commit("CHANGE", payload);
   },
+  LOGOUT({ commit, dispatch }: any): void {
+    dispatch("clearAll", null, { root: true });
+    router.push({ name: "home" });
+  },
   async LOGIN({ commit, state }: any, payload: any): Promise<void> {
     if (state.status === "loading") return;
     commit("CHANGE", { status: "loading" });
@@ -39,15 +54,20 @@ const actions = {
       data: payload,
     });
     if (error) {
-      console.log("error", error);
       commit("CHANGE", { status: "error" });
-      if (error?.message) {
-        Vue.$toast.error(error.message);
+      if (error?.response?.data?.message) {
+        Vue.$toast.error(error.response.data.message);
       } else {
         Vue.$toast.error("Ocorreu um erro interno!");
       }
     } else {
-      commit("CHANGE", { token: data.token, status: "" });
+      commit("CHANGE", {
+        token: data.token,
+        timeLogin: Date.now(),
+        name: data.name,
+        userId: data.userId,
+        status: "",
+      });
       router.push({ name: "dashboard" });
     }
   },
@@ -62,13 +82,19 @@ const actions = {
     if (error) {
       console.log("error", error);
       commit("CHANGE", { status: "error" });
-      if (error?.message) {
-        Vue.$toast.error(error.message);
+      if (error?.response?.data?.message) {
+        Vue.$toast.error(error.response.data.message);
       } else {
         Vue.$toast.error("Ocorreu um erro interno!");
       }
     } else {
-      commit("CHANGE", { token: data.token, status: "" });
+      commit("CHANGE", {
+        token: data.token,
+        timeLogin: Date.now(),
+        name: data.name,
+        userId: data.userId,
+        status: "",
+      });
       router.push({ name: "dashboard" });
     }
   },

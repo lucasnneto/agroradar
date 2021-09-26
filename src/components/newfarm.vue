@@ -1,26 +1,110 @@
 <template>
-  <v-overlay :value="cmpModal">
-    <v-dialog v-model="cmpModal" persistent max-width="1000px">
-      <v-card class="pa-5">
-        <div class="d-flex">
-          <v-btn icon color="primary" class="mr-2" @click="closeModal">
-            <v-icon x-large>mdi-close</v-icon>
-          </v-btn>
-          <h1>Nova fazenda</h1>
-        </div>
-      </v-card>
-    </v-dialog>
-  </v-overlay>
+  <v-flex class="ma-10">
+    <div class="d-flex flex-column">
+      <div class="d-flex">
+        <v-btn icon color="primary" class="mr-2" @click="closeModal">
+          <v-icon x-large>mdi-close</v-icon>
+        </v-btn>
+        <h1>Nova fazenda</h1>
+      </div>
+      <v-form ref="form">
+        <v-row class="mt-6">
+          <v-col :cols="isMobile ? 12 : 6">
+            <v-text-field
+              outlined
+              label="Nome da Fazenda"
+              :rules="[rules.required]"
+              v-model="name"
+            ></v-text-field>
+            <p>Utilize o botão de pesquisa para buscar o endereço pelo CEP</p>
+            <v-text-field
+              outlined
+              label="CEP"
+              :rules="[rules.required]"
+              v-model="cep"
+              v-mask="'##.###-###'"
+              append-outer-icon="mdi-magnify"
+              @click:append-outer="searchCEP"
+              :loading="loadcep"
+              @keyup.enter="searchCEP"
+            ></v-text-field>
+
+            <v-text-field
+              outlined
+              label="Rua"
+              :rules="[rules.required]"
+              v-model="address"
+            ></v-text-field>
+            <v-text-field
+              outlined
+              label="Bairro"
+              :rules="[rules.required]"
+              v-model="district"
+            ></v-text-field>
+            <div class="d-flex" :class="{ 'flex-column': isMobile }">
+              <v-text-field
+                outlined
+                label="Cidade"
+                :class="{ 'mr-4': !isMobile }"
+                :rules="[rules.required]"
+                v-model="city"
+              ></v-text-field>
+              <v-select
+                :style="!isMobile ? 'width:15%' : ''"
+                :items="Ufs"
+                v-model="state"
+                :rules="[rules.required]"
+                outlined
+                label="UF"
+              ></v-select>
+            </div>
+            <v-text-field
+              outlined
+              label="NIRF"
+              :rules="[rules.required]"
+              v-model="nirf"
+            ></v-text-field>
+          </v-col>
+          <v-col :cols="isMobile ? 12 : 6">
+            <editMap
+              v-model="circle"
+              @in-draw="(e) => (indraw = e)"
+              :invalidade="invalidLocal"
+            />
+          </v-col>
+        </v-row>
+      </v-form>
+      <div class="d-flex justify-center mt-5">
+        <v-btn
+          min-width="150"
+          height="50"
+          color="primary"
+          @click="createFarm"
+          :disabled="indraw"
+          >SALVAR</v-btn
+        >
+      </div>
+    </div>
+  </v-flex>
 </template>
 <script lang="ts">
 import Vue from "vue";
 import { getTypes } from "@/mixins/utils";
 import rules from "@/mixins/rules";
+import { removerMask, getUFs } from "@/mixins/utils";
 import { mapState } from "vuex";
+import http from "@/service/axios";
+import editMap from "@/components/maps/edit.vue";
+
 export default Vue.extend({
   mixins: [rules],
+  components: {
+    editMap,
+  },
+
   computed: {
-    ...mapState("farm", ["items", "status", "modal"]),
+    ...mapState("farm", ["modal"]),
+    ...mapState("auth", ["local"]),
     types() {
       return getTypes();
     },
@@ -29,6 +113,11 @@ export default Vue.extend({
     },
     loadingItems() {
       return status === "loadingItems";
+    },
+    Ufs() {
+      const ufs = Object.keys(getUFs());
+      ufs.splice(0, 1);
+      return ufs;
     },
     cmpModal: {
       get() {
@@ -39,22 +128,29 @@ export default Vue.extend({
       },
     },
   },
-  created() {
-    this.$store.dispatch(
-      "farm/GET_LIST",
-      "9ac521ac-0d9e-4f6a-8010-d26b27e72cfa"
-    );
-  },
   data: () => ({
-    type: "",
-    farm: "",
-    otherType: "",
+    name: "",
+    cep: "",
+    address: "",
+    district: "",
+    city: "",
+    state: "",
+    nirf: "",
+    loadcep: false,
+    indraw: false,
+    circle: {} as any,
+    invalidLocal: false,
   }),
+  watch: {
+    indraw() {
+      this.invalidLocal = false;
+    },
+  },
   methods: {
     closeModal() {
-      this.$store.dispatch("farm/CHANGE", { modal: "" });
+      this.$router.push({ name: "dashboard" });
     },
-    createPlague() {
+    createFarm() {
       if (
         !(this.$refs.form as Vue & {
           validate: () => boolean;
@@ -62,12 +158,46 @@ export default Vue.extend({
       ) {
         return;
       }
+      if (Object.keys(this.circle).length === 0) {
+        this.invalidLocal = true;
+        return;
+      }
+      const userId = this.$store.getters["auth/userId"];
       const payload = {
-        name: this.type === "Outro" ? this.otherType : this.type,
-        farmId: this.farm,
+        name: this.name,
+        userId: userId,
+        street: this.address,
+        district: this.district,
+        city: this.city,
+        cep: this.cep,
+        state: this.state,
+        nirf: this.nirf,
+        position: {
+          radius: this.circle.radius,
+          lat: this.circle.lat,
+          long: this.circle.lng,
+        },
       };
-
-      this.$store.dispatch("plague/NEW_PLAGUE", payload);
+      console.log(payload);
+      this.$store.dispatch("farm/NEW_FARM", payload);
+    },
+    searchCEP() {
+      if (!this.cep) return;
+      this.loadcep = true;
+      http
+        .get("https://ws.apicep.com/cep/" + removerMask(this.cep) + ".json")
+        .then((res) => {
+          this.address = res.data.address;
+          this.district = res.data.district;
+          this.city = res.data.city;
+          this.state = res.data.state;
+        })
+        .catch((err) => {
+          this.$toast.error("Ocorreu um erro ao buscar o CEP");
+        })
+        .finally(() => {
+          this.loadcep = false;
+        });
     },
   },
 });

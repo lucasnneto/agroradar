@@ -10,23 +10,24 @@
       :center="center"
     >
       <l-tile-layer :url="url"></l-tile-layer>
-      <l-circle
-        v-for="area in items"
-        :key="area._id"
-        :lat-lng="[area.farmId.position.lat, area.farmId.position.long]"
-        :radius="area.farmId.position.radius"
-        :color="$vuetify.theme.themes.light.primary.darken2"
-        :fillColor="$vuetify.theme.themes.light.primary.darken2"
-      >
-        <l-popup :options="{ minWidth: 180 }">
-          <div class="d-flex flex-column justify-center text-center">
-            <img src="@/assets/garfanhoto.svg" class="mb-3" height="30" />
-            <h1 class="mb-1">1.300</h1>
-            <p class="mb-5">Casos</p>
-            <h2>Garfanhoto</h2>
-          </div>
-        </l-popup>
-      </l-circle>
+      <div v-for="area in items" :key="area._id">
+        <l-circle
+          v-if="area.farmId"
+          :lat-lng="[area.farmId.position.lat, area.farmId.position.long]"
+          :radius="area.farmId.position.radius"
+          :color="$vuetify.theme.themes.light.primary.darken2"
+          :fillColor="$vuetify.theme.themes.light.primary.darken2"
+        >
+          <l-popup :options="{ minWidth: 180 }">
+            <div class="d-flex flex-column justify-center text-center">
+              <img src="@/assets/gafanhoto.svg" class="mb-3" height="30" />
+              <h1 class="mb-1">1.300</h1>
+              <p class="mb-5">Casos</p>
+              <h2>Gafanhoto</h2>
+            </div>
+          </l-popup>
+        </l-circle>
+      </div>
     </l-map>
     <v-btn
       elevation="2"
@@ -55,6 +56,9 @@ export default Vue.extend({
         (position: any) => {
           const crd = position?.coords;
           this.center = [crd.latitude, crd.longitude];
+          this.$store.dispatch("auth/CHANGE", {
+            local: [crd.latitude, crd.longitude],
+          });
         },
         async (error: any) => {
           console.error(error);
@@ -81,7 +85,7 @@ export default Vue.extend({
     },
   },
   data: () => ({
-    center: [-19.7483, -47.9169], //[-18.9225925, -48.2652564],
+    center: [-19.7483, -47.9169],
   }),
 });
 </script>

@@ -78,6 +78,7 @@
 <script lang="ts">
 import Vue from "vue";
 import rules from "@/mixins/rules";
+import { removerMask } from "@/mixins/utils";
 import { mapState } from "vuex";
 export default Vue.extend({
   mixins: [rules],
@@ -106,7 +107,7 @@ export default Vue.extend({
       const payload = {
         email: this.email,
         password: this.senha,
-        taxId: this.taxId,
+        taxId: removerMask(this.taxId),
         name: this.name,
       };
       this.$store.dispatch("auth/REGISTRAR", payload);
