@@ -94,9 +94,14 @@ export default Vue.extend({
   }),
   methods: {
     login() {
-      this.$emit("change-mode", "in");
+      this.$store.dispatch("auth/CHANGE", {
+        screen: "in",
+      });
     },
     closeModal() {
+      this.$store.dispatch("auth/CHANGE", {
+        screen: "in",
+      });
       this.$router.push({ name: "home" });
     },
     cadastrar() {
