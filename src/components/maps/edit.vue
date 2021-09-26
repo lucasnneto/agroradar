@@ -67,7 +67,6 @@ export default Vue.extend({
       map.addControl(drawControl);
 
       map.on((L as any).Draw.Event.CREATED, (e: any) => {
-        console.log("aaa");
         var layer = e.layer;
         drawnItems.addLayer(layer);
         this.circle = layer;

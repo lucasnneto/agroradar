@@ -16,6 +16,7 @@
               :rules="[rules.required]"
               v-model="name"
             ></v-text-field>
+            <p>Utilize o botão de pesquisa para buscar o endereço pelo CEP</p>
             <v-text-field
               outlined
               label="CEP"
@@ -24,7 +25,10 @@
               v-mask="'##.###-###'"
               append-outer-icon="mdi-magnify"
               @click:append-outer="searchCEP"
+              :loading="loadcep"
+              @keyup.enter="searchCEP"
             ></v-text-field>
+
             <v-text-field
               outlined
               label="Rua"
@@ -134,7 +138,7 @@ export default Vue.extend({
     nirf: "",
     loadcep: false,
     indraw: false,
-    circle: {},
+    circle: {} as any,
     invalidLocal: false,
   }),
   watch: {
@@ -158,7 +162,24 @@ export default Vue.extend({
         this.invalidLocal = true;
         return;
       }
-      console.log(this.circle);
+      const userId = this.$store.getters["auth/userId"];
+      const payload = {
+        name: this.name,
+        userId: userId,
+        street: this.address,
+        district: this.district,
+        city: this.city,
+        cep: this.cep,
+        state: this.state,
+        nirf: this.nirf,
+        position: {
+          radius: this.circle.radius,
+          lat: this.circle.lat,
+          long: this.circle.lng,
+        },
+      };
+      console.log(payload);
+      this.$store.dispatch("farm/NEW_FARM", payload);
     },
     searchCEP() {
       if (!this.cep) return;
@@ -177,7 +198,6 @@ export default Vue.extend({
         .finally(() => {
           this.loadcep = false;
         });
-      console.log(this.cep);
     },
   },
 });
