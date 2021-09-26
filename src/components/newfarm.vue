@@ -62,51 +62,23 @@
             ></v-text-field>
           </v-col>
           <v-col :cols="isMobile ? 12 : 6">
-            <h2>Selecione Região</h2>
-
-            <l-map
-              ref="map"
-              style="height:300px;max-weight:250px;overflow:hidden"
-              :zoom="9"
-              :center="center"
-            >
-              <l-tile-layer :url="url"></l-tile-layer>
-            </l-map>
-
-            <div class="d-flex justify-space-around text-center my-10">
-              <div>
-                <h4>
-                  -
-                </h4>
-                <h3>LAT</h3>
-              </div>
-              <div>
-                <h4>
-                  -
-                </h4>
-                <h3>LNG</h3>
-              </div>
-              <div>
-                <h4>
-                  -
-                </h4>
-                <h3>RAIO</h3>
-              </div>
-            </div>
-            <div class="d-flex justify-center">
-              <v-btn
-                min-width="150"
-                height="50"
-                color="primary darken-1"
-                @click="novoCircle"
-                >NOVa região</v-btn
-              >
-            </div>
+            <editMap
+              v-model="circle"
+              @in-draw="(e) => (indraw = e)"
+              :invalidade="invalidLocal"
+            />
           </v-col>
         </v-row>
       </v-form>
       <div class="d-flex justify-center mt-5">
-        <v-btn min-width="150" height="50" color="primary">SALVAR</v-btn>
+        <v-btn
+          min-width="150"
+          height="50"
+          color="primary"
+          @click="createFarm"
+          :disabled="indraw"
+          >SALVAR</v-btn
+        >
       </div>
     </div>
   </v-flex>
@@ -118,45 +90,17 @@ import rules from "@/mixins/rules";
 import { removerMask, getUFs } from "@/mixins/utils";
 import { mapState } from "vuex";
 import http from "@/service/axios";
-import L from "leaflet";
-import "leaflet-draw";
-var drawnItems = new L.FeatureGroup();
+import editMap from "@/components/maps/edit.vue";
+
 export default Vue.extend({
   mixins: [rules],
-  mounted() {
-    this.$nextTick(() => {
-      const map = (this.$refs.map as any).mapObject;
-
-      map.addLayer(drawnItems);
-      const drawControl = new (L.Control as any).Draw({
-        position: "topright",
-        edit: {
-          featureGroup: drawnItems,
-          edit: false,
-          remove: false,
-        },
-        draw: false,
-      });
-      map.addControl(drawControl);
-
-      map.on((L as any).Draw.Event.CREATED, (e: any) => {
-        var layer = e.layer;
-        drawnItems.addLayer(layer);
-        console.log(layer);
-        this.circle = layer;
-      });
-    });
+  components: {
+    editMap,
   },
+
   computed: {
     ...mapState("farm", ["modal"]),
     ...mapState("auth", ["local"]),
-    url() {
-      return process.env.VUE_APP_MAP_URL;
-    },
-    center() {
-      if (this.local.lenght < 2) return [-19.7483, -47.9169];
-      return this.local;
-    },
     types() {
       return getTypes();
     },
@@ -189,22 +133,16 @@ export default Vue.extend({
     state: "",
     nirf: "",
     loadcep: false,
-    drawControl: "draw",
+    indraw: false,
     circle: {},
+    invalidLocal: false,
   }),
-  methods: {
-    novoCircle() {
-      if (this.drawControl === "draw") {
-        new (L as any).Draw.Circle((this.$refs.map as any).mapObject).enable();
-        this.drawControl = "remove";
-      } else {
-        (this.$refs.map as any).mapObject.removeLayer(this.circle);
-        // new (L as any).EditToolbar.Delete((this.$refs.map as any).mapObject, {
-        //   featureGroup: drawnItems,
-        // }).removeAllLayers();
-        this.drawControl = "draw";
-      }
+  watch: {
+    indraw() {
+      this.invalidLocal = false;
     },
+  },
+  methods: {
     closeModal() {
       this.$router.push({ name: "dashboard" });
     },
@@ -216,6 +154,11 @@ export default Vue.extend({
       ) {
         return;
       }
+      if (Object.keys(this.circle).length === 0) {
+        this.invalidLocal = true;
+        return;
+      }
+      console.log(this.circle);
     },
     searchCEP() {
       if (!this.cep) return;

@@ -4,12 +4,18 @@ import Vue from "vue";
 interface StadeBase {
   token: string;
   status: string;
+  timeLogin: number;
+  name: string;
+  userId: string;
   local: Array<any>;
 }
 const getDefaultState = () => {
   return {
     token: "",
     status: "",
+    timeLogin: 0,
+    name: "",
+    userId: "",
     local: [],
   };
 };
@@ -32,6 +38,10 @@ const actions = {
   CHANGE({ commit }: any, payload: StadeBase): void {
     commit("CHANGE", payload);
   },
+  LOGOUT({ commit, dispatch }: any): void {
+    dispatch("clearAll", null, { root: true });
+    router.push({ name: "home" });
+  },
   async LOGIN({ commit, state }: any, payload: any): Promise<void> {
     if (state.status === "loading") return;
     commit("CHANGE", { status: "loading" });
@@ -48,7 +58,13 @@ const actions = {
         Vue.$toast.error("Ocorreu um erro interno!");
       }
     } else {
-      commit("CHANGE", { token: data.token, status: "" });
+      commit("CHANGE", {
+        token: data.token,
+        timeLogin: Date.now(),
+        name: data.name,
+        userId: data.userId,
+        status: "",
+      });
       router.push({ name: "dashboard" });
     }
   },
@@ -69,7 +85,13 @@ const actions = {
         Vue.$toast.error("Ocorreu um erro interno!");
       }
     } else {
-      commit("CHANGE", { token: data.token, status: "" });
+      commit("CHANGE", {
+        token: data.token,
+        timeLogin: Date.now(),
+        name: data.name,
+        userId: data.userId,
+        status: "",
+      });
       router.push({ name: "dashboard" });
     }
   },

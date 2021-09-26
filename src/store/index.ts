@@ -13,6 +13,14 @@ const vuexLocal = new VuexPersistence<any>({
 });
 
 export default new Vuex.Store({
+  actions: {
+    clearAll(context: any) {
+      Object.keys(context.state).forEach((item) => {
+        context.commit(`${item}/resetState`);
+      });
+      sessionStorage.removeItem("hackathon");
+    },
+  },
   modules: {
     auth,
     plague,

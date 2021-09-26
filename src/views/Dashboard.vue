@@ -182,10 +182,7 @@ export default Vue.extend({
       this.$store.dispatch("plague/CHANGE", { modal: "NEW" });
     },
     logout() {
-      this.$store.dispatch("auth/RESET");
-      this.$store.dispatch("farm/RESET");
-      this.$store.dispatch("plague/RESET");
-      this.$router.push({ name: "home" });
+      this.$store.dispatch("auth/LOGOUT");
     },
   },
 });

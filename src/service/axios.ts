@@ -5,6 +5,12 @@ const http = axios.create({
 });
 http.interceptors.request.use(
   (config: any) => {
+    const hasExpired = Date.now() >= store.getters["auth/timeLogin"] + 3600000;
+    if (hasExpired) {
+      store.dispatch("authentication/LOGOUT");
+      window.location.reload();
+      return false;
+    }
     config.headers.Authorization = `Bearer ${store.getters["auth/token"]}`;
     return config;
   },
