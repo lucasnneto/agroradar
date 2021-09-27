@@ -2,6 +2,7 @@ import { axiosCall } from "@/service/axios";
 import Vue from "vue";
 interface StadeBase {
   items: Array<any>;
+  lista: Array<any>;
   item: any;
   notification: any;
   status: string;
@@ -10,6 +11,7 @@ interface StadeBase {
 const getDefaultState = () => {
   return {
     items: [],
+    lista: [],
     item: {},
     notification: {},
     status: "",
@@ -153,6 +155,29 @@ const actions = {
       commit("CHANGE", {
         status: "",
         data: data.items,
+      });
+    }
+  },
+  async GET_LISTA({ commit, state }: any): Promise<void> {
+    if (state.status === "loading") return;
+    commit("CHANGE", { status: "loadingData" });
+    const [error, data] = await axiosCall({
+      method: "get",
+      url: `/plague/listPlagues`,
+    });
+    if (error) {
+      commit("CHANGE", { status: "error" });
+      if (error?.response?.data?.message) {
+        Vue.$toast.error(error.response.data.message);
+      } else {
+        Vue.$toast.error("Ocorreu um erro interno!");
+      }
+    } else {
+      const l = data;
+      l.push("OUTRO");
+      commit("CHANGE", {
+        status: "",
+        lista: l,
       });
     }
   },

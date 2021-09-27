@@ -77,17 +77,19 @@
 
         <v-col :cols="isMobile ? '12' : false">
           <h4 class="mb-4">1º Selecione os tipos de pragas</h4>
-          <v-chip
-            class="ma-2"
-            color="primary"
-            label
-            v-for="type in types"
-            :outlined="!plagues.includes(type)"
-            :key="type"
-            @click="plagueList(type)"
-          >
-            {{ type }}
-          </v-chip>
+          <div style="max-height:200px; overflow:auto">
+            <v-chip
+              class="ma-2"
+              color="primary"
+              label
+              v-for="type in lista"
+              :outlined="!plagues.includes(type)"
+              :key="type"
+              @click="plagueList(type)"
+            >
+              {{ type }}
+            </v-chip>
+          </div>
         </v-col>
         <v-col :cols="isMobile ? '12' : false">
           <h4 class="mb-4">2º Selecione o intervalo</h4>
@@ -197,6 +199,7 @@ export default Vue.extend({
       modalPlague: "modal",
       status: "status",
       plagueData: "data",
+      lista: "lista",
     }),
     ...mapState("farm", { modalFarm: "modal" }),
     ...mapState("auth", ["name"]),
@@ -269,6 +272,7 @@ export default Vue.extend({
     },
   },
   created() {
+    this.$store.dispatch("plague/GET_LISTA");
     this.$store.dispatch("plague/GET_DATA");
   },
   data: () => ({
