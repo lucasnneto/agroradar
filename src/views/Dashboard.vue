@@ -40,6 +40,7 @@
         <v-col :cols="isMobile ? '12' : false">
           <div class="d-flex flex-column align-center">
             <h3 class="mb-3 text-center">Relação de tipos por total</h3>
+
             <apexchart
               width="250px"
               type="donut"
@@ -130,7 +131,11 @@
       >
     </div>
 
-    <v-navigation-drawer v-if="!isMobile" permanent app>
+    <v-navigation-drawer
+      v-if="!isMobile && status !== 'loadingData'"
+      permanent
+      app
+    >
       <h3 class="text-center mb-4 mt-10">Estados Referência</h3>
       <v-flex class="d-flex overflow-y-auto">
         <v-flex class="d-flex">
@@ -155,6 +160,20 @@
     <newplague v-if="modalPlague === 'NEW'" />
     <filterMap v-if="modalPlague === 'FILTER'" />
     <alertModal v-if="modalPlague === 'ALERT'" />
+    <v-overlay
+      v-if="status === 'loadingData'"
+      color="grey"
+      class="d-flex justify-center align-center"
+      opacity="0.5"
+      :dark="false"
+      absolute
+    >
+      <v-progress-circular
+        indeterminate
+        color="primary"
+        size="70"
+      ></v-progress-circular>
+    </v-overlay>
   </v-flex>
 </template>
 <script lang="ts">
@@ -262,6 +281,8 @@ export default Vue.extend({
     changeUf(uf: string) {
       if (uf === this.state) return;
       this.state = uf;
+      if (uf === "BRASIL") this.$store.dispatch("plague/GET_DATA");
+      else this.$store.dispatch("plague/GET_DATA_STATE", uf);
     },
     plagueList(plague: string) {
       const index = this.plagues.findIndex((el) => el === plague);

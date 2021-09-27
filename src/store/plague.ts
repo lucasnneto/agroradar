@@ -26,6 +26,18 @@ const mutations = {
   CHANGE(state: StadeBase, payload: StadeBase): void {
     Object.assign(state, payload);
   },
+  REMOVE(state: StadeBase, payload: string): void {
+    const id = state.notification.findIndex((el: any) => el._id === payload);
+    if (id !== -1) {
+      state.notification.splice(id, 1);
+    }
+  },
+  LOAD(state: StadeBase, payload: any): void {
+    const id = state.notification.findIndex((el: any) => el._id === payload.id);
+    if (id !== -1) {
+      state.notification[id].load = payload.status;
+    }
+  },
 };
 const actions = {
   RESET({ commit }: any): void {
@@ -118,7 +130,7 @@ const actions = {
     } else {
       commit("CHANGE", {
         status: "",
-        notification: data.items,
+        notification: data.items.map((el: any) => ({ ...el, load: false })),
         modal: "ALERT",
       });
     }
@@ -142,6 +154,47 @@ const actions = {
         status: "",
         data: data.items,
       });
+    }
+  },
+  async GET_DATA_STATE({ commit, state }: any, payload: any): Promise<void> {
+    if (state.status === "loading") return;
+    commit("CHANGE", { status: "loadingData" });
+    const [error, data] = await axiosCall({
+      method: "get",
+      url: `/plague/frontList/${payload}`,
+    });
+    if (error) {
+      commit("CHANGE", { status: "error" });
+      if (error?.response?.data?.message) {
+        Vue.$toast.error(error.response.data.message);
+      } else {
+        Vue.$toast.error("Ocorreu um erro interno!");
+      }
+    } else {
+      commit("CHANGE", {
+        status: "",
+        data: data.items,
+      });
+    }
+  },
+  async REMOVENOT({ commit, state }: any, payload: any): Promise<void> {
+    if (state.status === "loading") return;
+    commit("LOAD", { id: payload, status: true });
+    const [error, data] = await axiosCall({
+      method: "delete",
+      url: `/plague/notification/${payload}`,
+    });
+    if (error) {
+      commit("LOAD", { id: payload, status: false });
+
+      if (error?.response?.data?.message) {
+        Vue.$toast.error(error.response.data.message);
+      } else {
+        Vue.$toast.error("Ocorreu um erro interno!");
+      }
+    } else {
+      commit("REMOVE", payload);
+      commit("LOAD", { id: payload, status: false });
     }
   },
 };
