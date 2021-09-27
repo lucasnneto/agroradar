@@ -13,17 +13,26 @@
         <h1>Notificações</h1>
       </div>
       <div style="max-height:350px" class="overflow-auto">
-        <v-list-item two-line>
-          <v-list-item-content>
-            <div v-for="not in notification" :key="not._id">
+        <template v-for="(not, index) in notification">
+          <v-list-item two-line :key="not._id">
+            <v-list-item-content>
               <v-list-item-title>{{ not.message }}</v-list-item-title>
               <v-list-item-subtitle>{{
                 formattedDate(not.createdAt)
               }}</v-list-item-subtitle>
-              <v-divider class="my-2"></v-divider>
-            </div>
-          </v-list-item-content>
-        </v-list-item>
+            </v-list-item-content>
+            <v-list-item-action>
+              <v-btn icon @click="dismis(not._id)" :loading="not.load">
+                <v-icon color="grey lighten-1">mdi-close</v-icon>
+              </v-btn>
+            </v-list-item-action>
+          </v-list-item>
+          <v-divider
+            :key="index"
+            v-if="index < notification.length - 1"
+            class="my-1"
+          ></v-divider>
+        </template>
       </div>
     </v-card>
   </v-dialog>
@@ -47,6 +56,9 @@ export default Vue.extend({
   methods: {
     closeModal() {
       this.$store.dispatch("plague/CHANGE", { modal: "" });
+    },
+    dismis(id: string) {
+      this.$store.dispatch("plague/REMOVENOT", id);
     },
     formattedDate,
   },
