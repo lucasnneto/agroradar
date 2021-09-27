@@ -38,6 +38,12 @@
         </l-circle>
       </div>
     </l-map>
+    <img
+      src="@/assets/AgroRadar.png"
+      class="absolute mt-5"
+      :style="!isMobile ? 'top: 0;left: 50%;' : 'top: 0px;'"
+      width="200"
+    />
     <v-btn
       elevation="2"
       fab
