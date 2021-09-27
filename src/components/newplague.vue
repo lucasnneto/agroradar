@@ -17,7 +17,7 @@
           <v-col cols="12">
             <h3 class="mb-3">Sobre a praga</h3>
             <v-select
-              :items="types"
+              :items="lista"
               v-model="type"
               :rules="[rules.required]"
               outlined
@@ -100,7 +100,11 @@ export default Vue.extend({
   mixins: [rules],
   computed: {
     ...mapState("farm", ["items", "status"]),
-    ...mapState("plague", { modal: "modal", statusPlague: "status" }),
+    ...mapState("plague", {
+      modal: "modal",
+      statusPlague: "status",
+      lista: "lista",
+    }),
     types() {
       return getTypes();
     },
