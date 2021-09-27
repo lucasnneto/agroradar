@@ -23,11 +23,24 @@
               :fillColor="$vuetify.theme.themes.light.primary.darken2"
             >
               <l-popup :options="{ minWidth: 180 }">
+                <p class="mb-5 text-center">Casos de</p>
                 <div class="d-flex flex-column justify-center text-center">
-                  <img src="@/assets/gafanhoto.svg" class="mb-3" height="30" />
-                  <h1 class="mb-1">1.300</h1>
-                  <p class="mb-5">Casos</p>
-                  <h2>Gafanhoto</h2>
+                  <img
+                    v-if="area.photo.length === 0"
+                    src="@/assets/gafanhoto.svg"
+                    class="mb-3"
+                    height="30"
+                  />
+                  <div v-else class="d-flex justify-center">
+                    <img
+                      :src="area.photo[0]"
+                      class="mb-3"
+                      height="150"
+                      width="150"
+                    />
+                  </div>
+
+                  <h2>{{ area.name }}</h2>
                 </div>
               </l-popup>
             </l-circle>
