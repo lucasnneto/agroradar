@@ -3,10 +3,13 @@
     class="ma-10 d-flex flex-column justify-space-between"
     style="height:90%"
   >
-    <div class="d-flex justify-space-between align-center mb-4">
+    <div
+      class="d-flex justify-space-between align-center mb-4"
+      :class="isMobile ? 'flex-column' : ''"
+    >
       <h2 v-if="isMobile">Bem vindo, {{ name.split(" ")[0] }}</h2>
       <h1 v-else>Bem vindo, {{ name.split(" ")[0] }}</h1>
-      <div>
+      <div class="d-flex align-center" :class="isMobile ? 'mt-3' : ''">
         <v-btn
           icon
           color="primary"
@@ -215,7 +218,9 @@ export default Vue.extend({
     seriesPie() {
       let data: any = [];
       if (this.plagueData?.percentList)
-        data = this.plagueData.percentList.map((el: any) => el.percent * 100);
+        data = this.plagueData.percentList.map((el: any) =>
+          Number(Number(el.percent * 100).toFixed(2))
+        );
       return data;
     },
     optionsPie() {

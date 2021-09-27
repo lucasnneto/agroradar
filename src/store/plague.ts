@@ -33,6 +33,8 @@ const mutations = {
     if (id !== -1) {
       state.notification.splice(id, 1);
     }
+    state.modal = "";
+    Vue.$toast.success("Nenhuma notificação nova!");
   },
   LOAD(state: StadeBase, payload: any): void {
     const id = state.notification.findIndex((el: any) => el._id === payload.id);
@@ -130,11 +132,18 @@ const actions = {
         Vue.$toast.error("Ocorreu um erro interno!");
       }
     } else {
-      commit("CHANGE", {
-        status: "",
-        notification: data.items.map((el: any) => ({ ...el, load: false })),
-        modal: "ALERT",
-      });
+      if (data.items.length > 0)
+        commit("CHANGE", {
+          status: "",
+          notification: data.items.map((el: any) => ({ ...el, load: false })),
+          modal: "ALERT",
+        });
+      else {
+        commit("CHANGE", {
+          status: "",
+        });
+        Vue.$toast.success("Nenhuma notificação nova!");
+      }
     }
   },
   async GET_DATA({ commit, state }: any): Promise<void> {
