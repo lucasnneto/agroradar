@@ -9,7 +9,10 @@ import VueToast from "vue-toast-notification";
 import "vue-toast-notification/dist/theme-default.css";
 import VueMask from "v-mask";
 import "leaflet-draw/dist/leaflet.draw.css";
+import VueApexCharts from "vue-apexcharts";
+Vue.use(VueApexCharts);
 
+Vue.component("apexchart", VueApexCharts);
 Vue.use(VueMask);
 Vue.use(VueToast, {
   position: "top-right",

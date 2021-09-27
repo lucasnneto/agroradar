@@ -33,34 +33,36 @@
         <v-col :cols="isMobile ? '12' : false">
           <div class="d-flex flex-column align-center">
             <h3 class="mb-3 text-center">TOTAL DE PRAGAS</h3>
-            <h1 class="mb-6">20.000</h1>
+            <h1 class="mb-6">{{ plagueData.totalPlague }}</h1>
             <img class="mb-10" src="@/assets/leaf.svg" height="47" />
           </div>
         </v-col>
         <v-col :cols="isMobile ? '12' : false">
           <div class="d-flex flex-column align-center">
-            <h3 class="mb-10 text-center">Relação de tipos por total</h3>
-            <img
-              class="mb-10"
-              src="https://img2.gratispng.com/20180328/ajq/kisspng-donuts-pie-chart-chart-5abb86a2cfe6b0.9579968515222391388516.jpg"
-              height="130"
+            <h3 class="mb-3 text-center">Relação de tipos por total</h3>
+            <apexchart
+              width="250px"
+              type="donut"
+              :options="optionsPie"
+              :series="seriesPie"
             />
           </div>
         </v-col>
         <v-col :cols="isMobile ? '12' : false">
           <div class="d-flex flex-column align-center">
-            <h3 class="mb-10">Casos nos últimos dias</h3>
-            <img
-              class="mb-10"
-              src="https://help.highbond.com/helpdocs/riskbond/pt-br/Content/images/visualizer/chart_examples/standard_area_chart.png"
-              height="90"
-            />
+            <h3 class="mb-3">Casos nos últimos dias</h3>
+            <apexchart
+              width="300px"
+              type="area"
+              :options="optionsArea"
+              :series="seriesArea"
+            ></apexchart>
           </div>
         </v-col>
         <v-col :cols="isMobile ? '12' : false">
           <div class="d-flex flex-column align-center">
             <h3 class="mb-3 text-center">TIPOS DE PRAGAS</h3>
-            <h1 class="mb-6">3</h1>
+            <h1 class="mb-6">{{ plagueData.plagueType }}</h1>
             <img class="mb-10" src="@/assets/type.svg" />
           </div>
         </v-col>
@@ -163,6 +165,7 @@ import newplague from "@/components/newplague.vue";
 import alertModal from "@/components/alert.vue";
 import filterMap from "@/components/maps/filter.vue";
 import { mapState } from "vuex";
+import { formattedDate } from "@/mixins/utils";
 export default Vue.extend({
   components: {
     datapicker,
@@ -171,7 +174,11 @@ export default Vue.extend({
     alertModal,
   },
   computed: {
-    ...mapState("plague", { modalPlague: "modal", status: "status" }),
+    ...mapState("plague", {
+      modalPlague: "modal",
+      status: "status",
+      plagueData: "data",
+    }),
     ...mapState("farm", { modalFarm: "modal" }),
     ...mapState("auth", ["name"]),
     isMobile() {
@@ -183,6 +190,67 @@ export default Vue.extend({
     types() {
       return getTypes();
     },
+    seriesPie() {
+      let data: any = [];
+      if (this.plagueData?.percentList)
+        data = this.plagueData.percentList.map((el: any) => el.percent * 100);
+      return data;
+    },
+    optionsPie() {
+      let data: any = [];
+      if (this.plagueData?.percentList)
+        data = this.plagueData.percentList.map((el: any) => el.type);
+      return {
+        labels: data,
+        colors: ["#04842C", "#3DBC65", "#A2CFB0"],
+        legend: {
+          show: false,
+        },
+      };
+    },
+    optionsArea() {
+      let data: any = [];
+      if (this.plagueData?.caseDays)
+        data = this.plagueData.caseDays.map((el: any) => {
+          const newData = formattedDate(el.date);
+          if (newData.length === 10) {
+            const dt = newData.split("/");
+            return `${dt[0]}/${dt[1]}`;
+          }
+          return "?";
+        });
+      return {
+        colors: ["#04842C"],
+        chart: {
+          toolbar: {
+            show: false,
+          },
+          zoom: {
+            enabled: false,
+          },
+        },
+        dataLabels: {
+          enabled: false,
+        },
+        xaxis: {
+          categories: data,
+        },
+      };
+    },
+    seriesArea() {
+      let data: any = [];
+      if (this.plagueData?.caseDays)
+        data = this.plagueData.caseDays.map((el: any) => el.qtd);
+      return [
+        {
+          name: "Caso(s) no dia",
+          data: data,
+        },
+      ];
+    },
+  },
+  created() {
+    this.$store.dispatch("plague/GET_DATA");
   },
   data: () => ({
     state: "BRASIL",
