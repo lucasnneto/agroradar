@@ -4,6 +4,7 @@ import store from "@/store";
 import Home from "../views/Home.vue";
 import Sign from "../components/Sign.vue";
 import Dashboard from "../views/Dashboard.vue";
+import Recover from "../views/Recover.vue";
 import newfarm from "../components/newfarm.vue";
 
 Vue.use(VueRouter);
@@ -26,6 +27,11 @@ const routes: Array<RouteConfig> = [
     name: "dashboard",
     component: Dashboard,
     meta: { auth: true },
+  },
+  {
+    path: "/cadastro-senha/:id",
+    name: "recover",
+    component: Recover,
   },
   {
     path: "/farm",

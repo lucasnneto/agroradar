@@ -1,7 +1,7 @@
 <template>
   <div class="card white fill-height py-11 px-8 d-flex flex-column">
     <div class="d-flex" v-if="$vuetify.breakpoint.width > 700">
-      <h1>Entrar</h1>
+      <h1>Recuperar Senha</h1>
     </div>
     <div class="fill-height d-flex flex-column justify-center ">
       <div class="d-flex mb-10" v-if="$vuetify.breakpoint.width <= 700">
@@ -25,33 +25,6 @@
             :rules="[rules.required, rules.email]"
             label="E-mail"
           ></v-text-field>
-          <v-text-field
-            v-model="senha"
-            :type="typePass"
-            @keyup.enter="entrar"
-            @click:append="
-              typePass = typePass === 'password' ? 'text' : 'password'
-            "
-            :append-icon="
-              typePass === 'password'
-                ? 'mdi-eye-outline'
-                : 'mdi-eye-off-outline'
-            "
-            :rules="[rules.required]"
-            outlined
-            label="Senha"
-          ></v-text-field>
-          <div
-            class="d-flex align-center mb-100"
-            :class="$vuetify.breakpoint.width <= 700 ? 'flex-column' : ''"
-          >
-            <p>
-              Esqueceu a senha?
-            </p>
-            <v-btn @click="recoverSenha" text color="primary"
-              >Recuperar Senha</v-btn
-            >
-          </div>
           <v-btn
             block
             height="52"
@@ -60,18 +33,19 @@
             @click="entrar"
             :loading="loading"
           >
-            Entrar
+            Enviar
           </v-btn>
-          <v-btn
-            block
-            height="52"
-            text
-            color="primary"
-            @click="create"
-            :disabled="loading"
-          >
-            Criar conta
-          </v-btn>
+          <div class="d-flex justify-center">
+            <v-btn
+              fab
+              color="black"
+              outlined
+              @click="login"
+              :disabled="loading"
+            >
+              <v-icon>mdi-arrow-left</v-icon>
+            </v-btn>
+          </div>
         </div>
       </v-form>
     </div>
@@ -85,8 +59,6 @@ export default Vue.extend({
   mixins: [rules],
   data: () => ({
     email: "",
-    senha: "",
-    typePass: "password",
   }),
   computed: {
     ...mapState("auth", ["status"]),
@@ -105,25 +77,19 @@ export default Vue.extend({
       }
       const payload = {
         email: this.email,
-        password: this.senha,
       };
-      this.$store.dispatch("auth/LOGIN", payload);
-    },
-    create() {
-      this.$store.dispatch("auth/CHANGE", {
-        screen: "up",
-      });
-    },
-    recoverSenha() {
-      this.$store.dispatch("auth/CHANGE", {
-        screen: "recover",
-      });
+      this.$store.dispatch("auth/RECUPERAR", payload);
     },
     closeModal() {
       this.$store.dispatch("auth/CHANGE", {
         screen: "in",
       });
       this.$router.push({ name: "home" });
+    },
+    login() {
+      this.$store.dispatch("auth/CHANGE", {
+        screen: "in",
+      });
     },
   },
 });

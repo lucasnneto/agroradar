@@ -8,6 +8,7 @@ interface StadeBase {
   name: string;
   userId: string;
   local: Array<any>;
+  screen: string;
 }
 const getDefaultState = () => {
   return {
@@ -17,6 +18,7 @@ const getDefaultState = () => {
     name: "",
     userId: "",
     local: [],
+    screen: "in",
   };
 };
 const state = getDefaultState();
@@ -24,6 +26,7 @@ const getters = {
   token: (state: StadeBase): string => state.token,
   userId: (state: StadeBase): string => state.userId,
   name: (state: StadeBase): string => state.name,
+  screen: (state: StadeBase): string => state.screen,
   timeLogin: (state: StadeBase): number => state.timeLogin,
 };
 const mutations = {
@@ -94,8 +97,57 @@ const actions = {
         name: data.name,
         userId: data.userId,
         status: "",
+        screen: "in",
       });
       router.push({ name: "dashboard" });
+    }
+  },
+  async RECUPERAR({ commit, state }: any, payload: any): Promise<void> {
+    if (state.status === "loading") return;
+    commit("CHANGE", { status: "loading" });
+    const [error, data] = await axiosCall({
+      method: "post",
+      url: "/authenticate/resetPassword",
+      data: payload,
+    });
+    if (error) {
+      console.log("error", error);
+      commit("CHANGE", { status: "error" });
+      if (error?.response?.data?.message) {
+        Vue.$toast.error(error.response.data.message);
+      } else {
+        Vue.$toast.error("Ocorreu um erro interno!");
+      }
+    } else {
+      Vue.$toast.success("Email de recuperação de senha enviado com sucesso");
+      commit("CHANGE", {
+        status: "",
+        screen: "in",
+      });
+    }
+  },
+  async NEW_PAS({ commit, state }: any, payload: any): Promise<void> {
+    if (state.status === "loading") return;
+    commit("CHANGE", { status: "loading" });
+    const [error, data] = await axiosCall({
+      method: "post",
+      url: `/authenticate/registerPassword/${payload.token}`,
+      data: payload.payload,
+    });
+    if (error) {
+      console.log("error", error);
+      commit("CHANGE", { status: "error" });
+      if (error?.response?.data?.message) {
+        Vue.$toast.error(error.response.data.message);
+      } else {
+        Vue.$toast.error("Ocorreu um erro interno!");
+      }
+    } else {
+      Vue.$toast.success("Senha alterada com sucesso");
+      commit("CHANGE", {
+        status: "",
+      });
+      router.push({ name: "home" });
     }
   },
 };

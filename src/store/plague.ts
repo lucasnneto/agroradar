@@ -3,6 +3,7 @@ import Vue from "vue";
 interface StadeBase {
   items: Array<any>;
   item: any;
+  notification: any;
   status: string;
   modal: string;
 }
@@ -10,8 +11,10 @@ const getDefaultState = () => {
   return {
     items: [],
     item: {},
+    notification: {},
     status: "",
     modal: "",
+    data: {},
   };
 };
 const state = getDefaultState();
@@ -57,6 +60,9 @@ const actions = {
       method: "post",
       url: "/plague/register",
       data: payload,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
     });
     if (error) {
       commit("CHANGE", { status: "error" });
@@ -73,7 +79,7 @@ const actions = {
   async GET_PLAGUE_FILTER({ commit, state }: any, payload: any): Promise<void> {
     if (state.status === "loading") return;
     const uf = payload.state === "BRASIL" ? "" : payload.state;
-    commit("CHANGE", { status: "loading" });
+    commit("CHANGE", { status: "loadingMap" });
     const [error, data] = await axiosCall({
       method: "post",
       url: `/plague/list/${uf}`,
@@ -92,6 +98,49 @@ const actions = {
         items: data.items,
         modal: "FILTER",
         item: { state: payload.state },
+      });
+    }
+  },
+  async GET_NOTIFICATION({ commit, state }: any, payload: any): Promise<void> {
+    if (state.status === "loading") return;
+    commit("CHANGE", { status: "loading" });
+    const [error, data] = await axiosCall({
+      method: "get",
+      url: `/plague/notification/${payload}`,
+    });
+    if (error) {
+      commit("CHANGE", { status: "error" });
+      if (error?.response?.data?.message) {
+        Vue.$toast.error(error.response.data.message);
+      } else {
+        Vue.$toast.error("Ocorreu um erro interno!");
+      }
+    } else {
+      commit("CHANGE", {
+        status: "",
+        notification: data.items,
+        modal: "ALERT",
+      });
+    }
+  },
+  async GET_DATA({ commit, state }: any): Promise<void> {
+    if (state.status === "loading") return;
+    commit("CHANGE", { status: "loadingData" });
+    const [error, data] = await axiosCall({
+      method: "get",
+      url: `/plague/frontList`,
+    });
+    if (error) {
+      commit("CHANGE", { status: "error" });
+      if (error?.response?.data?.message) {
+        Vue.$toast.error(error.response.data.message);
+      } else {
+        Vue.$toast.error("Ocorreu um erro interno!");
+      }
+    } else {
+      commit("CHANGE", {
+        status: "",
+        data: data.items,
       });
     }
   },

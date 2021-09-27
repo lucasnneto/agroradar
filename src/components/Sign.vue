@@ -17,7 +17,7 @@
       >
         <img src="@/assets/close-green.svg" />
       </v-btn>
-      <component :is="mode" @change-mode="changeMode" />
+      <component :is="screen" />
     </div>
   </v-overlay>
 </template>
@@ -26,18 +26,21 @@
 import Vue from "vue";
 import In from "./Sign/In.vue";
 import Up from "./Sign/Up.vue";
+import Recover from "./Sign/Recover.vue";
+import { mapState } from "vuex";
 
 export default Vue.extend({
-  components: { In, Up },
+  components: { In, Up, Recover },
   name: "Sign",
-  data: () => ({
-    mode: "in",
-  }),
+  data: () => ({}),
+  computed: {
+    ...mapState("auth", ["screen"]),
+  },
   methods: {
-    changeMode(mode: string): void {
-      this.mode = mode;
-    },
     closeModal() {
+      this.$store.dispatch("auth/CHANGE", {
+        screen: "in",
+      });
       this.$router.push({ name: "home" });
     },
   },
