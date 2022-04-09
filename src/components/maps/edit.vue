@@ -2,7 +2,6 @@
   <div>
     <h2>Selecione Região</h2>
     <p>Utilize o botão mais abaixo para iniciar a demarcação de área</p>
-
     <l-map
       ref="map"
       style="height:300px;max-weight:250px;overflow:hidden"
@@ -110,7 +109,7 @@ export default Vue.extend({
       return this.$vuetify.breakpoint.width <= 700;
     },
     center() {
-      if (this.local.lenght < 2) return [-19.7483, -47.9169];
+      if (this.local.length < 2) return [-19.7483, -47.9169];
       return this.local;
     },
   },

@@ -58,7 +58,7 @@ export default Vue.extend({
   computed: {
     ...mapState("plague", ["items", "modal", "item"]),
     plagues() {
-      if (this.items.lenght <= 0) return [];
+      if (this.items.length <= 0) return [];
       return this.items.filter((el: any) => {
         return el.farmId && el.farmId.position;
       });
